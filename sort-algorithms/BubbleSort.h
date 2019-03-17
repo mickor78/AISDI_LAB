@@ -14,7 +14,7 @@ class BubbleSort
 	int length;
 
 public:
-	BubbleSort(int[] , int length_);
+	BubbleSort(int[] , int length_i);
 	~BubbleSort();
 
 	void sort();

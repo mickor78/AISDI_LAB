@@ -16,5 +16,6 @@ int main()
 	BubbleSort A(TableToSort, Length);
 	A.sort();
 
+
 	return 0;
 }
