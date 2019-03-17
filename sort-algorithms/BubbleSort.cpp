@@ -5,7 +5,7 @@
 #include "BubbleSort.h"
 #include <iostream>
 
-BubbleSort::BubbleSort(int* input_table, int length_i): length(length_i)
+BubbleSort::BubbleSort(const int* input_table, int length_i): length(length_i)
 {
 	std::cout<<" BubbleSort(): { ";
 	table = new int[length_i];
@@ -57,4 +57,21 @@ std::ostream &operator<<( std::ostream &output, const BubbleSort &B )
 	output<<"}";
 
 	return output;
+}
+
+bool BubbleSort::isEqualTo(const int *table_i)
+{
+	bool isEqual = true;
+	int i=0;
+
+	while( isEqual & i<length)
+	{
+		if( table[i] != *(table_i) )
+			isEqual = false;
+
+		table_i++;
+		i++;
+	}
+
+	return isEqual;
 }

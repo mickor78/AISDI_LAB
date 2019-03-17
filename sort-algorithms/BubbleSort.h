@@ -14,10 +14,11 @@ class BubbleSort
 	int length;
 
 public:
-	BubbleSort(int[] , int length_i);
+	BubbleSort(const int[] , int length_i);
 	~BubbleSort();
 
 	void sort();
+	bool isEqualTo(const int[]);
 
 	friend std::ostream &operator<<(std::ostream &output, const BubbleSort &B);
 };
