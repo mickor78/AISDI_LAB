@@ -6,19 +6,19 @@
 
 SortAlg::SortAlg(const int* input_table, int length_i): length(length_i)
 {
-	std::cout<<" SortAlg(): { ";
+	std::cout<<"{ ";
 	table = new int[length_i];
 	for(int i=0; i<length_i; i++)
 	{
 		table[i] = input_table[i];
 		std::cout<<table[i]<<" ";
 	}
-	std::cout<<"}"<<std::endl;
+	std::cout<<"}: ";
 }
 
 SortAlg::~SortAlg()
 {
-	std::cout<<"~SortAlg(): "<<*this<<std::endl;
+	std::cout<<*this<<" "<<std::endl;
 
 	delete[] table;
 }

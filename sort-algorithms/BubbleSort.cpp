@@ -3,10 +3,17 @@
 //
 
 #include "BubbleSort.h"
-#include <iostream>
 
 BubbleSort::BubbleSort(const int* input_table, int length_i): 	SortAlg(input_table, length_i)
-{}
+{
+	std::cout << " BubbleSort()" << std::endl;
+}
+
+BubbleSort::~BubbleSort()
+{
+	std::cout << "~BubbleSort(): ";
+}
+
 
 
 void BubbleSort::sort()

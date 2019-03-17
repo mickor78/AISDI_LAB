@@ -13,7 +13,7 @@ class BubbleSort : public SortAlg
 
 public:
 	BubbleSort(const int[] , int length_i);
-	~BubbleSort() override = default;
+	~BubbleSort() override;
 
 	void sort() override;
 

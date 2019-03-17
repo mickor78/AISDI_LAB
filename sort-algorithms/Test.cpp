@@ -3,6 +3,7 @@
 //
 
 #include "BubbleSort.h"
+#include "InsertSort.h"
 #include <iostream>
 
 using namespace std;
@@ -15,9 +16,13 @@ int main()
 	int Length = sizeof(TableToSort)/sizeof(int);
 
 	BubbleSort A(TableToSort, Length);
+	InsertSort B(TableToSort, Length);
 	A.sort();
+	B.sort();
 
-	cout << A.isEqualTo(TableSorted) << endl;
+	cout << "BubbleSort: " << A.isEqualTo(TableSorted) << endl;
+	cout << "InsertSort: " << B.isEqualTo(TableSorted) << endl;
+
 
 	return 0;
 }
