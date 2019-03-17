@@ -6,21 +6,17 @@
 #define AISDI_LAB_BUBBLESORT_H
 
 #include <iostream>
+#include "SortAlg.h"
 
-class BubbleSort
+class BubbleSort : public SortAlg
 {
-
-	int* table;
-	int length;
 
 public:
 	BubbleSort(const int[] , int length_i);
-	~BubbleSort();
+	~BubbleSort() override = default;
 
-	void sort();
-	bool isEqualTo(const int[]);
+	void sort() override;
 
-	friend std::ostream &operator<<(std::ostream &output, const BubbleSort &B);
 };
 
 #endif //AISDI_LAB_BUBBLESORT_H

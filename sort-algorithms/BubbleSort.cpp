@@ -5,24 +5,9 @@
 #include "BubbleSort.h"
 #include <iostream>
 
-BubbleSort::BubbleSort(const int* input_table, int length_i): length(length_i)
-{
-	std::cout<<" BubbleSort(): { ";
-	table = new int[length_i];
-	for(int i=0; i<length_i; i++)
-	{
-		table[i] = input_table[i];
-		std::cout<<table[i]<<" ";
-	}
-	std::cout<<"}"<<std::endl;
-}
+BubbleSort::BubbleSort(const int* input_table, int length_i): 	SortAlg(input_table, length_i)
+{}
 
-BubbleSort::~BubbleSort()
-{
-	std::cout<<"~BubbleSort(): "<<*this<<std::endl;
-
-	delete[] table;
-}
 
 void BubbleSort::sort()
 {
@@ -47,31 +32,4 @@ void BubbleSort::sort()
 	}
 }
 
-std::ostream &operator<<( std::ostream &output, const BubbleSort &B )
-{
-	output <<"{ ";
-	for(int i=0; i<B.length; i++)
-	{
-		output<<B.table[i]<<" ";
-	}
-	output<<"}";
 
-	return output;
-}
-
-bool BubbleSort::isEqualTo(const int *table_i)
-{
-	bool isEqual = true;
-	int i=0;
-
-	while( isEqual & i<length)
-	{
-		if( table[i] != *(table_i) )
-			isEqual = false;
-
-		table_i++;
-		i++;
-	}
-
-	return isEqual;
-}
