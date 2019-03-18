@@ -27,7 +27,6 @@ int main()
 	cout << "BubbleSort: " << A.isEqualTo(TableSorted) << endl;
 	cout << "InsertSort: " << B.isEqualTo(TableSorted) << endl;
 	cout << "SelectSort: " << C.isEqualTo(TableSorted) << endl;
-
 	cout<<endl;
 
 	return 0;
