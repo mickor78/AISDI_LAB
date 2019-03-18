@@ -17,5 +17,23 @@ InsertSort::~InsertSort()
 
 void InsertSort::sort()
 {
+	if( length > 1 )									// check if not sorting 1-element table
+	{
+		int temp, j;
 
+		for(int i=0; i<length-1; i++)					// for every element
+		{
+			if( table[i] > table[i+1] )					// if first element from unsorted part of the table is smaller...
+			{											// ...than last element from sorted part do
+				temp = table[i+1];
+				j = i;
+				while( j >= 0 & table[j] > temp )		// move sorted part +1 until finding place for new element
+				{
+					table[j+1] = table [j];
+					j--;
+				}
+				table[j+1] = temp;
+			}
+		}
+	}
 }

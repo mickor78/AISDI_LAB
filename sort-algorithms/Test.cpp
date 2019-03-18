@@ -20,9 +20,10 @@ int main()
 	A.sort();
 	B.sort();
 
+	cout<<endl;
 	cout << "BubbleSort: " << A.isEqualTo(TableSorted) << endl;
 	cout << "InsertSort: " << B.isEqualTo(TableSorted) << endl;
-
+	cout<<endl;
 
 	return 0;
 }
