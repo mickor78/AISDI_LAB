@@ -4,6 +4,7 @@
 
 #include "BubbleSort.h"
 #include "InsertSort.h"
+#include "SelectSort.h"
 #include <iostream>
 
 using namespace std;
@@ -17,12 +18,16 @@ int main()
 
 	BubbleSort A(TableToSort, Length);
 	InsertSort B(TableToSort, Length);
+	SelectSort C(TableToSort, Length);
 	A.sort();
 	B.sort();
+	C.sort();
 
 	cout<<endl;
 	cout << "BubbleSort: " << A.isEqualTo(TableSorted) << endl;
 	cout << "InsertSort: " << B.isEqualTo(TableSorted) << endl;
+	cout << "SelectSort: " << C.isEqualTo(TableSorted) << endl;
+
 	cout<<endl;
 
 	return 0;
