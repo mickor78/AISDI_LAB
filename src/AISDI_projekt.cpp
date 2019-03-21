@@ -30,7 +30,8 @@ int main()
 
 	while(!text.eof()){
 		char x = text.get();
-		if (x != ' ' && x!= '\n'&& x!= '\t'){
+		bool isLetter= x != ' ' && x != '\n'&& x != '\t' && x!='.'&& x!=',';
+		if (isLetter){
 			word+=x;
 		} else {
 			if (word!="") wordToSort.push_back(word);

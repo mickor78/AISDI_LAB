@@ -7,17 +7,29 @@
 
 #include <iostream>
 #include <vector>
+#include <random>
 
 
 template <typename IteratorType>
 void quicksort(IteratorType first, IteratorType last){
 
-	for (auto var = first; var != last; ++var) {
-		std::cout<<*var<<std::endl;
-	}
+	if (last-first==1){}
+	else{
+
+		IteratorType pivot = last-1;
+	for (IteratorType var = first; var != last; ++var) {
+			if (*var>=*pivot && var<pivot){
+				auto elm = *var;
+				*pivot = elm;
+
+			}
+
+		}
+
 
 	if (*first > *(last-1)) std::cout<<*first<<"wiekszy niz"<<*(last-1);
 	else std::cout<<*first<<"mniejszy niz"<<*(last-1);
+	}
 
 }
 
