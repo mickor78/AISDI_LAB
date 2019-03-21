@@ -12,7 +12,9 @@
 template <typename IteratorType>
 void quicksort(IteratorType first, IteratorType last){
 
-	std::cout<<*first;
+	for (auto var = first; var != last; ++var) {
+		std::cout<<*var;
+	}
 
 }
 

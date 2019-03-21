@@ -27,14 +27,12 @@ int main()
 		tableToSort.push_back(arr1[i]);
 		tableSorted.push_back(arr2[i]);
 	}
-	int Length = tableSorted.size();
 
 
 
 
-
-	sort(tableSorted.begin(),tableSorted.end());
-	quicksort(tableSorted.begin(),tableSorted.end());
+	sort(tableToSort.begin(),tableToSort.end());
+	quicksort(tableToSort.begin(),tableToSort.end());
 
 
 	return 0;
