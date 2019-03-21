@@ -13,8 +13,11 @@ template <typename IteratorType>
 void quicksort(IteratorType first, IteratorType last){
 
 	for (auto var = first; var != last; ++var) {
-		std::cout<<*var;
+		std::cout<<*var<<std::endl;
 	}
+
+	if (*first > *(last-1)) std::cout<<*first<<"wiekszy niz"<<*(last-1);
+	else std::cout<<*first<<"mniejszy niz"<<*(last-1);
 
 }
 
