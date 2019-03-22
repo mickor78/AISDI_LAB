@@ -19,11 +19,12 @@ int main()
 {
 
 
-	vector<int> tableToSort = {3,2,6,9,1,2,14,16,0,1,-1,5,3,5};
+	vector<int> tableToSort = {3,2,6,9,1,2};
 	vector<int> Z = tableToSort;
 
 	print(tableToSort.begin(), tableToSort.end());
-	mergeSort(tableToSort.begin(), tableToSort.end(), Z.begin());
+	//mergeSort(tableToSort.begin(), tableToSort.end(), Z.begin());
+	heapSort(tableToSort.begin(), tableToSort.end());
 	print(tableToSort.begin(), tableToSort.end());
 
 	return 0;
