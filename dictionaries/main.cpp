@@ -128,23 +128,19 @@ public:
 
 private:
 
+	template<typename key_type, typename value_type>
 	class Node{
 	public:
-    	Node(const Node& node){
-    		left = &node;
+
+		Node() = default;
+		Node(key_type key, value_type value) : key(key), value(value){}
+
+		~Node(){
+    		if(left)
+    			delete(left);
+    		if(right)
+    			delete(right);
     	}
-
-		Node(const Node& nodeLeft, const Node& nodeRight){
-			left = &nodeLeft;
-			right = &nodeRight;
-		}
-
-		Node(){
-    		left = nullptr;
-    		right = nullptr;
-    	}
-
-		~Node() = default;
 
 		void setLeft(const Node& node){
 			left = &node;
@@ -166,12 +162,14 @@ private:
 	private:
     	Node* left;
 		Node* right;
+		key_type key;
+		value_type value;
 
     };
 
-	Node* root;
+	Node<key_type, value_type>* root;
 
-	const size_t sizeLookup(Node* parentNode) const{
+	const size_t sizeLookup(Node<key_type, value_type>* parentNode) const{
 		if(!parentNode)
 			return 0;
 		else{
