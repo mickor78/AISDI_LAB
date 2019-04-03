@@ -72,7 +72,7 @@ public:
      */
     bool isEmpty() const
     {
-        if(root == nullptr)
+        if(!root)
         	return true;
         else
         	return false;
@@ -123,7 +123,7 @@ public:
      * zwraca liczbe wpisow w slowniku
      */
     size_t size() const {
-        throw std::runtime_error("TODO: size");
+        return sizeLookup(root);
     }
 
 private:
@@ -139,7 +139,11 @@ private:
 			right = &nodeRight;
 		}
 
-		Node() = default;
+		Node(){
+    		left = nullptr;
+    		right = nullptr;
+    	}
+
 		~Node() = default;
 
 		void setLeft(const Node& node){
@@ -150,23 +154,36 @@ private:
 			left = &node;
 		}
 
-		std::unique_ptr<Node> getLeft(){
+		Node* getLeft(){
 			return left;
 		}
 
-		std::unique_ptr<Node> getRight(){
+		Node* getRight(){
 			return right;
 		}
 
 
 	private:
-    	std::unique_ptr<Node> left;
-		std::unique_ptr<Node> right;
+    	Node* left;
+		Node* right;
 
     };
-	std::unique_ptr<Node> root;
+
+	Node* root;
+
+	const size_t sizeLookup(Node* parentNode) const{
+		if(!parentNode)
+			return 0;
+		else{
+			size_t nLeft = sizeLookup(parentNode->getLeft());
+			size_t nRight = sizeLookup(parentNode->getRight());
+			return nLeft + nRight + 1;
+		}
+	}
 
 };
+
+
 
 #include "tests.h"
 
