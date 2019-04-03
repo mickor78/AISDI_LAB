@@ -1,6 +1,7 @@
 #include <iostream>
 #include <chrono>
 #include <utility>
+#include <memory>
 
 /*!
  *  Narzedzie do zliczania czasu
@@ -54,12 +55,16 @@ private:
 template<typename KeyType, typename ValueType>
 class TreeMap
 {
-  public:
+public:
     using key_type = KeyType;
     using mapped_type = ValueType;
     using value_type = std::pair<const key_type, mapped_type>;
 
-    TreeMap() = default;    // konstruktor trywialny
+    TreeMap(){
+    	root = nullptr;
+
+    }
+
     ~TreeMap() = default;   // destruktor trywialny
 
     /*!
@@ -67,7 +72,10 @@ class TreeMap
      */
     bool isEmpty() const
     {
-        throw std::runtime_error("TODO: isEmpty");
+        if(root == nullptr)
+        	return true;
+        else
+        	return false;
     }
 
     /*!
@@ -117,7 +125,46 @@ class TreeMap
     size_t size() const {
         throw std::runtime_error("TODO: size");
     }
+
 private:
+
+	class Node{
+	public:
+    	Node(const Node& node){
+    		left = &node;
+    	}
+
+		Node(const Node& nodeLeft, const Node& nodeRight){
+			left = &nodeLeft;
+			right = &nodeRight;
+		}
+
+		Node() = default;
+		~Node() = default;
+
+		void setLeft(const Node& node){
+			left = &node;
+		}
+
+		void setRight(const Node& node){
+			left = &node;
+		}
+
+		std::unique_ptr<Node> getLeft(){
+			return left;
+		}
+
+		std::unique_ptr<Node> getRight(){
+			return right;
+		}
+
+
+	private:
+    	std::unique_ptr<Node> left;
+		std::unique_ptr<Node> right;
+
+    };
+	std::unique_ptr<Node> root;
 
 };
 
