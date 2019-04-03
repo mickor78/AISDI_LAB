@@ -116,18 +116,21 @@ public:
      * zwraca informacje, czy istnieje w slowniku podany klucz
      */
     bool contains(const key_type& key) const {
-        throw std::runtime_error("TODO: contains");
+        return doesItContainIt(key, root);
     }
 
     /*!
      * zwraca liczbe wpisow w slowniku
      */
     size_t size() const {
-        return sizeLookup(root);
+        return getSizeLookup(root);
     }
 
 private:
 
+	/*
+	 * aggregated class representing nodes in tree structure
+	 */
 	template<typename key_type, typename value_type>
 	class Node{
 	public:
@@ -150,34 +153,66 @@ private:
 			left = &node;
 		}
 
-		Node* getLeft(){
+		Node* getLeft() const {
 			return left;
 		}
 
-		Node* getRight(){
+		Node* getRight() const {
 			return right;
+		}
+
+		key_type getKey() const {
+			return key;
+		}
+
+		value_type getValue() const {
+			return value;
 		}
 
 
 	private:
-    	Node* left;
-		Node* right;
+    	Node* left;				// left child node
+		Node* right;			// right child node
 		key_type key;
 		value_type value;
 
     };
 
-	Node<key_type, value_type>* root;
-
-	const size_t sizeLookup(Node<key_type, value_type>* parentNode) const{
+	/*
+	 * regressive function calculating the number of nodes in (sub)tree structure, starting from parentNode
+	 */
+	const size_t getSizeLookup(const Node<key_type, value_type> *parentNode) const{
 		if(!parentNode)
 			return 0;
 		else{
-			size_t nLeft = sizeLookup(parentNode->getLeft());
-			size_t nRight = sizeLookup(parentNode->getRight());
+			size_t nLeft = getSizeLookup(parentNode->getLeft());
+			size_t nRight = getSizeLookup(parentNode->getRight());
 			return nLeft + nRight + 1;
 		}
 	}
+
+	/*
+	 * regressive function looking for desiredKey in (sub)tree structure, starting from parentNode
+	 */
+	bool doesItContainIt(const key_type &desiredKey, const Node<key_type, value_type> *parentNode) const {
+		// finish looking for a key if function used on dead-end
+		if(this->getSizeLookup(parentNode) <= 0)
+			return false;
+		else{
+			key_type parentKey = parentNode->getKey();
+
+			if( parentKey == desiredKey)
+				return true;
+			// decide on which branch look for recursively
+			// according to binary tree theory
+			else if( parentKey < desiredKey )
+				return doesItContainIt(desiredKey, parentNode->getLeft());
+			else
+				return doesItContainIt(desiredKey, parentNode->getRight());
+		}
+	}
+
+	Node<key_type, value_type>* root;
 
 };
 
