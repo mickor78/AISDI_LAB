@@ -82,6 +82,8 @@ public:
         else
             root->addNode(new Node<key_type, mapped_type>(key, value));
 
+        this->balance();
+        
     }
 
     /*!
@@ -261,6 +263,14 @@ private:
 			else
 				return doesItContainIt(desiredKey, parentNode->getRight());
 		}
+	}
+
+	/*
+	 * make this BST balanced <=> restores AVL tree structure
+	 */
+	void balance(){
+		// TODO complete it
+
 	}
 
 
