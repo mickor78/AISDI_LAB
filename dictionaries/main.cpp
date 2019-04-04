@@ -85,9 +85,8 @@ public:
     {
         if (isEmpty()) root= new Node<key_type, value_type>(key,value_type(key,value));
         else{
-//            Node<key_type, value_type> element(key,value_type(key,value));
-//            Node<key_type, value_type> *elementPtr = &element;
-//            root->setRight(&element);
+            child = new Node<key_type, value_type>(key,value_type(key,value));
+            root->setRight(*child);
         }
 
         //throw std::runtime_error("TODO: insert");
@@ -239,6 +238,7 @@ private:
 	}
 
 	Node<key_type, value_type>* root;
+    Node<key_type, value_type>* child;
 
 };
 
