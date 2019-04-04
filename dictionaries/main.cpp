@@ -101,7 +101,17 @@ public:
      */
     mapped_type& operator[](const key_type& key)
     {
-        throw std::runtime_error("TODO: operator[]");
+		Node<key_type, mapped_type>* desiredNode = getNode(key,root);
+
+		if(desiredNode)
+    		return desiredNode->getValueRef();
+
+		else{
+			mapped_type dummyVal{};
+
+			this->insert(key, dummyVal);
+			return getNode(key,root)->getValueRef();
+		}
     }
 
     /*!
@@ -115,7 +125,8 @@ public:
     /*!
      * zwraca informacje, czy istnieje w slowniku podany klucz
      */
-    bool contains(const key_type& key) const {
+    bool contains(const key_type& key) const
+    {
         return doesItContainIt(key, root);
     }
 
@@ -170,7 +181,7 @@ private:
 			return right;
 		}
 
-		key_type getKey() const {
+		const key_type getKey() const {
 			return key;
 		}
 
@@ -179,6 +190,10 @@ private:
 		}
 
 		const mapped_type& getValueRef() const {
+			return value;
+		}
+
+		mapped_type& getValueRef() {
 			return value;
 		}
 
