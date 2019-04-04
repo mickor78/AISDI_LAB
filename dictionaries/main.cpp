@@ -72,21 +72,18 @@ public:
      */
     bool isEmpty() const
     {
-        if(!root)
-        	return true;
-        else
-        	return false;
+        return root == nullptr;
     }
 
     /*!
      * dodaje wpis do slownika
      */
-    void insert(const key_type& key, const mapped_type &value)
+    void insert(const key_type& key, const mapped_type& value)
     {
-        if (isEmpty()) root= new Node<key_type, value_type>(key,value_type(key,value));
+        if (isEmpty())
+        	root = new Node<key_type, mapped_type>(key, value);
         else{
-            child = new Node<key_type, value_type>(key,value_type(key,value));
-            root->setRight(*child);
+            root->setRight(new Node<key_type, mapped_type>(key, value));
         }
 
         //throw std::runtime_error("TODO: insert");
@@ -137,12 +134,15 @@ private:
 	/*
 	 * aggregated class representing nodes in tree structure
 	 */
-	template<typename key_type, typename value_type>
+	template<typename key_type, typename mapped_type>
 	class Node{
 	public:
 
 		Node() = default;
-		Node(key_type key, value_type value) : key(key), value(value){}
+		Node(key_type key, mapped_type value) : key(key), value(value){
+			left = nullptr;
+			right = nullptr;
+		}
 
 		~Node(){
     		if(left)
@@ -151,12 +151,12 @@ private:
     			delete(right);
     	}
 
-		void setLeft(const Node& node){
-			left = &node;
+		void setLeft(Node* node){
+			left = node;
 		}
 
-		void setRight(const Node& node){
-			right = &node;
+		void setRight(Node* node){
+			right = node;
 		}
 
 		Node* getLeft() const {
@@ -180,14 +180,14 @@ private:
     	Node* left;				// left child node
 		Node* right;			// right child node
 		key_type key;
-		value_type value;
+		mapped_type value;
 
     };
 
 	/*
 	 * regressive function calculating the number of nodes in (sub)tree structure, starting from parentNode
 	 */
-	const size_t getSizeLookup(const Node<key_type, value_type> *parentNode) const{
+	const size_t getSizeLookup(const Node<key_type, mapped_type> *parentNode) const{
 		if(!parentNode)
 			return 0;
 		else{
@@ -206,12 +206,12 @@ private:
  	 *  LY RY           RY RX
 	 */
 
-	void rightRotation(const Node<key_type, value_type> **childNode) const{
-        Node<key_type , value_type >* nodeX = *childNode;
-        Node<key_type , value_type >* nodeY = *childNode->getLeft();
-        Node<key_type , value_type >* nodeLY = nodeY->getLeft();
-        Node<key_type , value_type >* nodeRY = nodeY->getRight();
-        Node<key_type , value_type >* nodeRX = nodeX->getRight();
+	void rightRotation(const Node<key_type, mapped_type> **childNode) const{
+        Node<key_type , mapped_type >* nodeX = *childNode;
+        Node<key_type , mapped_type >* nodeY = *childNode->getLeft();
+        Node<key_type , mapped_type >* nodeLY = nodeY->getLeft();
+        Node<key_type , mapped_type >* nodeRY = nodeY->getRight();
+        Node<key_type , mapped_type >* nodeRX = nodeX->getRight();
 
 
     }
@@ -219,7 +219,7 @@ private:
 	/*
 	 * regressive function looking for desiredKey in (sub)tree structure, starting from parentNode
 	 */
-	bool doesItContainIt(const key_type &desiredKey, const Node<key_type, value_type> *parentNode) const {
+	bool doesItContainIt(const key_type &desiredKey, const Node<key_type, mapped_type> *parentNode) const {
 		// finish looking for a key if function used on dead-end
 		if(this->getSizeLookup(parentNode) <= 0)
 			return false;
@@ -237,8 +237,8 @@ private:
 		}
 	}
 
-	Node<key_type, value_type>* root;
-    Node<key_type, value_type>* child;
+	Node<key_type, mapped_type>* root;
+    //Node<key_type, mapped_type>* child;
 
 };
 
