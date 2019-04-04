@@ -94,7 +94,8 @@ public:
      */
     void insert(const value_type &key_value)
     {
-        throw std::runtime_error("TODO: insert");
+        this->insert(key_value.first,key_value.second);
+        //throw std::runtime_error("TODO: insert");
     }
 
     /*!
@@ -104,7 +105,17 @@ public:
      */
     mapped_type& operator[](const key_type& key)
     {
-        throw std::runtime_error("TODO: operator[]");
+        if(this->getSizeLookup(root) <= 0)
+        {
+            root = new Node<key_type, mapped_type>();
+            *(root->getKeyPtr()) = key;
+            return root->getValuePtr();
+        }
+        else{
+            
+        }
+
+       // throw std::runtime_error("TODO: operator[]");
     }
 
     /*!
@@ -174,6 +185,14 @@ private:
 		value_type getValue() const {
 			return value;
 		}
+
+        key_type* getKeyPtr(){
+            return &key;
+        }
+
+        value_type* getValuePtr(){
+            return &value;
+        }
 
 
 	private:
