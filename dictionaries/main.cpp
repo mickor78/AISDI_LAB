@@ -83,7 +83,14 @@ public:
      */
     void insert(const key_type& key, const mapped_type &value)
     {
-        throw std::runtime_error("TODO: insert");
+        if (isEmpty()) root= new Node<key_type, value_type>(key,value_type(key,value));
+        else{
+//            Node<key_type, value_type> element(key,value_type(key,value));
+//            Node<key_type, value_type> *elementPtr = &element;
+//            root->setRight(&element);
+        }
+
+        //throw std::runtime_error("TODO: insert");
     }
 
     /*!
@@ -150,7 +157,7 @@ private:
 		}
 
 		void setRight(const Node& node){
-			left = &node;
+			right = &node;
 		}
 
 		Node* getLeft() const {
@@ -190,6 +197,25 @@ private:
 			return nLeft + nRight + 1;
 		}
 	}
+
+	/*
+	 * function executing right rotation
+	 *      X           Y
+	 *     / \         / \
+	 *    Y  RX   ->  LY  X
+	 *   / \             / \
+ 	 *  LY RY           RY RX
+	 */
+
+	void rightRotation(const Node<key_type, value_type> **childNode) const{
+        Node<key_type , value_type >* nodeX = *childNode;
+        Node<key_type , value_type >* nodeY = *childNode->getLeft();
+        Node<key_type , value_type >* nodeLY = nodeY->getLeft();
+        Node<key_type , value_type >* nodeRY = nodeY->getRight();
+        Node<key_type , value_type >* nodeRX = nodeX->getRight();
+
+
+    }
 
 	/*
 	 * regressive function looking for desiredKey in (sub)tree structure, starting from parentNode
