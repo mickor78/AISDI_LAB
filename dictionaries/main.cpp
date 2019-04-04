@@ -84,8 +84,8 @@ public:
         else
             root->addNode(new Node<key_type, mapped_type>(key, value));
 
-        this->balance();
-
+        this->setBalanceFactor(root);
+        //this->balance(root);
     }
 
     /*!
@@ -124,6 +124,8 @@ public:
         return getNode(key,root)->getValueRef();
     }
 
+
+
     /*!
      * zwraca informacje, czy istnieje w slowniku podany klucz
      */
@@ -138,6 +140,7 @@ public:
     size_t size() const {
         return getSizeLookup(root);
     }
+
 
 private:
 
@@ -165,7 +168,8 @@ private:
 				if(left)
 					left->addNode(node);
 				else
-					this->setLeft(node);
+                    this->setLeft(node);
+
 			}
 			else {
 				if(right)
@@ -199,24 +203,33 @@ private:
 			return value;
 		}
 
-
-	private:
-    	Node* left;				// left child node
-		Node* right;			// right child node
-		key_type key;
-		mapped_type value;
-
-		void setLeft(Node* node){
-			if(!left)
-				delete(left);
-			left = node;
+		void setFactor(int factor){
+		    balanceFactor = factor;
 		}
 
-		void setRight(Node* node){
-			if(!right)
-				delete(right);
-			right = node;
-		}
+        const int getFactor(){
+            return balanceFactor;
+        }
+
+        void setLeft(Node* node){
+            if(!left)
+                delete(left);
+            left = node;
+        }
+
+        void setRight(Node* node){
+            if(!right)
+                delete(right);
+            right = node;
+        }
+
+    private:
+        Node* left;				// left child node
+        Node* right;			// right child node
+        key_type key;
+        mapped_type value;
+
+		int balanceFactor;
 
 
 	};
@@ -234,21 +247,45 @@ private:
 		}
 	}
 
-	/*
-	 * function executing right rotation
-	 *      X           Y
-	 *     / \         / \
-	 *    Y  RX   ->  LY  X
-	 *   / \             / \
- 	 *  LY RY           RY RX
-	 */
+    const size_t setBalanceFactor(Node<key_type, mapped_type> *parentNode){
+        if(!parentNode)
+            return 1;
+        else{
+            size_t nLeft = setBalanceFactor(parentNode->getLeft());
+            size_t nRight = setBalanceFactor(parentNode->getRight());
+            parentNode->setFactor(nRight-nLeft);
 
-	void rightRotation(const Node<key_type, mapped_type> **childNode) const{
-        Node<key_type , mapped_type >* nodeX, nodeY;
-        nodeX = *childNode;
-        nodeY = nodeX->getLeft();
-        nodeX->setLeft(nodeY.getRight());
-        nodeY.setRight(nodeX);
+            // balancing not working TODO
+//            if(parentNode->getFactor()<=-2){
+//                Node<key_type,mapped_type>* p = parentNode;
+//                rightRotation(&p);
+//            }else if(parentNode->getFactor()>=2){
+//                Node<key_type,mapped_type>* p = parentNode;
+//                leftRotation(&p);
+//            }
+
+            return (nLeft>=nRight ? nLeft : nRight) + 1;
+        }
+    }
+
+
+
+
+
+    /*
+     * function executing right rotation
+     *      X           Y
+     *     / \         / \
+     *    Y  RX   ->  LY  X
+     *   / \             / \
+      *  LY RY           RY RX
+     */
+
+    void rightRotation(Node<key_type, mapped_type> **childNode){
+        Node<key_type , mapped_type >* nodeX = *childNode;
+        Node<key_type , mapped_type >* nodeY = nodeX->getLeft();
+        nodeX->setLeft(nodeY->getRight());
+        nodeY->setRight(nodeX);
         *childNode = nodeY;
     }
     /*
@@ -256,12 +293,11 @@ private:
      * symmetrical to above function
      */
 
-    void leftRotation(const Node<key_type, mapped_type> **childNode) const{
-        Node<key_type , mapped_type >* nodeX, nodeY;
-        nodeX = *childNode;
-        nodeY = nodeX->getRight();
-        nodeX->setRight(nodeY.getLeft());
-        nodeY.setLeft(nodeX);
+    void leftRotation(Node<key_type, mapped_type> **childNode) {
+        Node<key_type , mapped_type >* nodeX = *childNode;
+        Node<key_type , mapped_type >* nodeY = nodeX->getRight();
+        nodeX->setRight(nodeY->getLeft());
+        nodeY->setLeft(nodeX);
         *childNode = nodeY;
     }
 
