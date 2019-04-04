@@ -91,7 +91,7 @@ public:
      */
     void insert(const value_type &key_value)
     {
-        throw std::runtime_error("TODO: insert");
+        this->insert(key_value.first, key_value.second);
     }
 
     /*!
