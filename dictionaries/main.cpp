@@ -83,7 +83,7 @@ public:
             root->addNode(new Node<key_type, mapped_type>(key, value));
 
         this->balance();
-        
+
     }
 
     /*!
@@ -109,7 +109,7 @@ public:
      */
     const mapped_type& value(const key_type& key) const
     {
-        throw std::runtime_error("TODO: value");
+        return getNode(key,root)->getValueRef();
     }
 
     /*!
@@ -174,7 +174,11 @@ private:
 			return key;
 		}
 
-		value_type getValue() const {
+		mapped_type getValue() const {
+			return value;
+		}
+
+		const mapped_type& getValueRef() const {
 			return value;
 		}
 
@@ -222,8 +226,8 @@ private:
  	 *  LY RY           RY RX
 	 */
 
-	void rightRotation(const Node<key_type, value_type> **childNode) const{
-        Node<key_type , value_type >* nodeX, nodeY;
+	void rightRotation(const Node<key_type, mapped_type> **childNode) const{
+        Node<key_type , mapped_type >* nodeX, nodeY;
         nodeX = *childNode;
         nodeY = nodeX->getLeft();
         nodeX->setLeft(nodeY.getRight());
@@ -235,8 +239,8 @@ private:
      * symmetrical to above function
      */
 
-    void leftRotation(const Node<key_type, value_type> **childNode) const{
-        Node<key_type , value_type >* nodeX, nodeY;
+    void leftRotation(const Node<key_type, mapped_type> **childNode) const{
+        Node<key_type , mapped_type >* nodeX, nodeY;
         nodeX = *childNode;
         nodeY = nodeX->getRight();
         nodeX->setRight(nodeY.getLeft());
@@ -244,26 +248,59 @@ private:
         *childNode = nodeY;
     }
 
+
 	/*
-	 * regressive function looking for desiredKey in (sub)tree structure, starting from parentNode
+	 * recursive function for getting pointer on the node, based on desired key
 	 */
-	bool doesItContainIt(const key_type &desiredKey, const Node<key_type, mapped_type> *parentNode) const {
+	Node<key_type, mapped_type>*
+	        getNode(const key_type& desiredKey, Node<key_type, mapped_type> *parentNode){
 		// finish looking for a key if function used on dead-end
 		if(this->getSizeLookup(parentNode) <= 0)
-			return false;
+			return nullptr;
 		else{
 			key_type parentKey = parentNode->getKey();
 
 			if( desiredKey == parentKey )
-				return true;
-			// decide on which branch look for recursively
-			// according to binary tree theory
+				return parentNode;
+				// decide on which branch look for recursively
+				// according to binary tree theory
 			else if( desiredKey < parentKey )
-				return doesItContainIt(desiredKey, parentNode->getLeft());
+				return getNode(desiredKey, parentNode->getLeft());
 			else
-				return doesItContainIt(desiredKey, parentNode->getRight());
+				return getNode(desiredKey, parentNode->getRight());
 		}
 	}
+
+	/*
+	 * overloaded recursive function for getting pointer on the node, based on desired key
+	 */
+	const Node<key_type, mapped_type>*
+	        getNode(const key_type& desiredKey, const Node<key_type, mapped_type> *parentNode) const {
+		// finish looking for a key if function used on dead-end
+		if(this->getSizeLookup(parentNode) <= 0)
+			return nullptr;
+		else{
+			key_type parentKey = parentNode->getKey();
+
+			if( desiredKey == parentKey )
+				return parentNode;
+				// decide on which branch look for recursively
+				// according to binary tree theory
+			else if( desiredKey < parentKey )
+				return getNode(desiredKey, parentNode->getLeft());
+			else
+				return getNode(desiredKey, parentNode->getRight());
+		}
+	}
+
+
+	/*
+ * regressive function looking for desiredKey in (sub)tree structure, starting from parentNode
+ */
+	bool doesItContainIt(const key_type &desiredKey, const Node<key_type, mapped_type> *parentNode) const  {
+		return getNode(desiredKey, parentNode) != nullptr;
+	}
+
 
 	/*
 	 * make this BST balanced <=> restores AVL tree structure
