@@ -214,6 +214,10 @@ private:
         nodeY.setRight(nodeX);
         *childNode = nodeY;
     }
+    /*
+	 * function executing left rotation
+     * symmetrical to above function
+     */
 
     void leftRotation(const Node<key_type, value_type> **childNode) const{
         Node<key_type , value_type >* nodeX, nodeY;
@@ -246,7 +250,6 @@ private:
 	}
 
 	Node<key_type, value_type>* root;
-    Node<key_type, value_type>* child;
 
 };
 
