@@ -207,13 +207,21 @@ private:
 	 */
 
 	void rightRotation(const Node<key_type, value_type> **childNode) const{
-        Node<key_type , value_type >* nodeX = *childNode;
-        Node<key_type , value_type >* nodeY = *childNode->getLeft();
-        Node<key_type , value_type >* nodeLY = nodeY->getLeft();
-        Node<key_type , value_type >* nodeRY = nodeY->getRight();
-        Node<key_type , value_type >* nodeRX = nodeX->getRight();
+        Node<key_type , value_type >* nodeX, nodeY;
+        nodeX = *childNode;
+        nodeY = nodeX->getLeft();
+        nodeX->setLeft(nodeY.getRight());
+        nodeY.setRight(nodeX);
+        *childNode = nodeY;
+    }
 
-
+    void leftRotation(const Node<key_type, value_type> **childNode) const{
+        Node<key_type , value_type >* nodeX, nodeY;
+        nodeX = *childNode;
+        nodeY = nodeX->getRight();
+        nodeX->setRight(nodeY.getLeft());
+        nodeY.setLeft(nodeX);
+        *childNode = nodeY;
     }
 
 	/*
