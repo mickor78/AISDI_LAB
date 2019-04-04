@@ -60,10 +60,7 @@ public:
     using mapped_type = ValueType;
     using value_type = std::pair<const key_type, mapped_type>;
 
-    TreeMap(){
-    	root = nullptr;
-
-    }
+    TreeMap() : root(nullptr) {}
 
     ~TreeMap() = default;   // destruktor trywialny
 
@@ -82,11 +79,9 @@ public:
     {
         if (isEmpty())
         	root = new Node<key_type, mapped_type>(key, value);
-        else{
-            root->setRight(new Node<key_type, mapped_type>(key, value));
-        }
+        else
+            root->addNode(new Node<key_type, mapped_type>(key, value));
 
-        //throw std::runtime_error("TODO: insert");
     }
 
     /*!
@@ -139,10 +134,7 @@ private:
 	public:
 
 		Node() = default;
-		Node(key_type key, mapped_type value) : key(key), value(value){
-			left = nullptr;
-			right = nullptr;
-		}
+		Node(key_type key, mapped_type value) : key(key), value(value), left(nullptr), right(nullptr){}
 
 		~Node(){
     		if(left)
@@ -151,12 +143,21 @@ private:
     			delete(right);
     	}
 
-		void setLeft(Node* node){
-			left = node;
-		}
 
-		void setRight(Node* node){
-			right = node;
+		// recursive function for adding nodes to BST tree structure
+		void addNode(Node* node){
+			if(node->getKey() <= key){
+				if(left)
+					left->addNode(node);
+				else
+					this->setLeft(node);
+			}
+			else {
+				if(right)
+					right->addNode(node);
+				else
+					this->setRight(node);
+			}
 		}
 
 		Node* getLeft() const {
@@ -182,7 +183,20 @@ private:
 		key_type key;
 		mapped_type value;
 
-    };
+		void setLeft(Node* node){
+			if(!left)
+				delete(left);
+			left = node;
+		}
+
+		void setRight(Node* node){
+			if(!right)
+				delete(right);
+			right = node;
+		}
+
+
+	};
 
 	/*
 	 * regressive function calculating the number of nodes in (sub)tree structure, starting from parentNode
@@ -238,11 +252,11 @@ private:
 		else{
 			key_type parentKey = parentNode->getKey();
 
-			if( parentKey == desiredKey)
+			if( desiredKey == parentKey )
 				return true;
 			// decide on which branch look for recursively
 			// according to binary tree theory
-			else if( parentKey < desiredKey )
+			else if( desiredKey < parentKey )
 				return doesItContainIt(desiredKey, parentNode->getLeft());
 			else
 				return doesItContainIt(desiredKey, parentNode->getRight());
@@ -259,7 +273,8 @@ private:
 
 int main()
 {
-    unit_test();
+	insert_test();
+	unit_test();
 
     return 0;
 }
