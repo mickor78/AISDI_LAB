@@ -79,6 +79,8 @@ public:
     {
         if (isEmpty())
         	root = new Node<key_type, mapped_type>(key, value);
+        else if(this->contains(key))
+			getNode(key,root)->setValue(value);
         else
             root->addNode(new Node<key_type, mapped_type>(key, value));
 
@@ -185,8 +187,8 @@ private:
 			return key;
 		}
 
-		mapped_type getValue() const {
-			return value;
+		void setValue(const mapped_type& newValue){
+			value = newValue;
 		}
 
 		const mapped_type& getValueRef() const {
