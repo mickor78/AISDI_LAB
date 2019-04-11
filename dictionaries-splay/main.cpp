@@ -115,8 +115,12 @@ public:
         		    }
         	}
 
-			root = splay(root,key);
+
 		}
+		else
+			new_root->setValue(value);
+
+		root = splay(root,key);
     }
 
     /*!
@@ -124,7 +128,7 @@ public:
      */
     void insert(const value_type &key_value)
     {
-        throw std::runtime_error("TODO: insert");
+		this->insert(key_value.first, key_value.second);
     }
 
     /*!
@@ -134,29 +138,46 @@ public:
      */
     mapped_type& operator[](const key_type& key)
     {
-        throw std::runtime_error("TODO: operator[]");
+		root = splay(root,key);
+
+		if(root and root->getKey() == key)
+			return const_cast<mapped_type&>(root->getValue());
+
+		else{
+			mapped_type dummyVal{};
+
+			this->insert(key, dummyVal);
+			return const_cast<mapped_type&>(splay(root,key)->getValue());
+		}
     }
 
     /*!
      * zwraca wartosc dla podanego klucza
      */
-    const mapped_type& value(const key_type& key) const
+    const mapped_type& value(const key_type& key)
     {
-        throw std::runtime_error("TODO: value");
+		root = splay(root,key);
+		if(root->getKey() == key)
+			return root->getValue();
+		else
+		{
+			throw -1;
+		}
     }
 
     /*!
      * zwraca informacje, czy istnieje w slowniku podany klucz
      */
-    bool contains(const key_type& key) const {
-        throw std::runtime_error("TODO: contains");
+    bool contains(const key_type& desiredKey) {
+		root = splay(root,desiredKey);
+    	return root->getKey() == desiredKey;
     }
 
     /*!
      * zwraca liczbe wpisow w slowniku
      */
     size_t size() const {
-        throw std::runtime_error("TODO: size");
+		return getSizeLookup(root);
     }
 
 private:
@@ -182,6 +203,10 @@ private:
 
 		Node* getRight() const {
 			return right;
+		}
+
+		const mapped_type& getValue() const{
+			return value;
 		}
 
 		const key_type getKey() const {
@@ -223,7 +248,7 @@ private:
 
 	};
 
-    Node<key_type, mapped_type>* splay(Node<key_type, mapped_type>* root, const key_type& key){
+    Node<key_type, mapped_type>* splay(Node<key_type, mapped_type>* root, const key_type& key) {
 
     	auto child = getNodeSplay(root,key);
     	auto parent = getNodeSplayParent(root,child);
@@ -246,7 +271,7 @@ private:
 
 	Node<key_type, mapped_type>* root;
 
-	Node<key_type, mapped_type>* getNodeSplayParent(Node<key_type, mapped_type>* root, Node<key_type, mapped_type>* desiredChild){
+	Node<key_type, mapped_type>* getNodeSplayParent(Node<key_type, mapped_type>* root, Node<key_type, mapped_type>* desiredChild) {
 
     	mapped_type key = desiredChild->getKey();
     	Node<key_type, mapped_type>* child;
@@ -279,13 +304,13 @@ private:
     	}
 	}
 
-	Node<key_type, mapped_type>* getNodeSplay(Node<key_type, mapped_type>* root, const key_type& key){
+	Node<key_type, mapped_type>* getNodeSplay(Node<key_type, mapped_type>* root, const key_type& key) {
 
     	Node<key_type, mapped_type>* child;
 
     	if(!root)
 			return nullptr;
-		
+
     	else{
 			if(key == root->getKey())
 				return root;
@@ -333,6 +358,15 @@ private:
 				  *childNode = nodeY;
 			  }
 
+	const size_t getSizeLookup(const Node<key_type, mapped_type> *parentNode) const{
+		if(!parentNode)
+			return 0;
+		else{
+			size_t nLeft = getSizeLookup(parentNode->getLeft());
+			size_t nRight = getSizeLookup(parentNode->getRight());
+			return nLeft + nRight + 1;
+		}
+	}
 
 };
 

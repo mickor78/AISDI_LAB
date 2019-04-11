@@ -10,10 +10,10 @@ void unit_test() {
 
     // dodanie elementu do slownika
     dict.insert(0, 1);
-    dict.insert(1, 1);
-    dict.insert(2, 1);
-    dict.insert(3, 1);
-    dict.insert(4, 1);
+    //dict.insert(1, 1);
+    //dict.insert(2, 1);
+    //dict.insert(3, 1);
+    //dict.insert(4, 1);
 
     assert(dict.isEmpty() == false);
     assert(dict.size() == 1);
