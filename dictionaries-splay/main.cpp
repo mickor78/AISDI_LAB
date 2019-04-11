@@ -47,6 +47,7 @@ private:
 
 
 
+
 /*
  * Slownik
  *
@@ -54,10 +55,11 @@ private:
 template<typename KeyType, typename ValueType>
 class TreeMap
 {
-  public:
+public:
     using key_type = KeyType;
     using mapped_type = ValueType;
     using value_type = std::pair<const key_type, mapped_type>;
+
 
     TreeMap() : root(nullptr){}
     ~TreeMap() {
@@ -83,8 +85,8 @@ class TreeMap
     		return;
     	}
 
-    	auto new_root = splay(root,key);
-    	Node<key_type, mapped_type>* child;
+		auto new_root = splay(root,key);
+    	Node<key_type, mapped_type>* child = nullptr;
     	Node<key_type, mapped_type>* new_element = new Node<key_type, mapped_type>(key,value);
 
     	if(new_root->getKey()!= key)
@@ -94,25 +96,27 @@ class TreeMap
         			child = new_root->getRight();
         			if( child != nullptr ){
         				new_element->setRight(child);
-        				new_root->unsafeDeleteRightChild();
-        				new_root->setRight(new_element);
+						new_root->unsafeDeleteRightChild();
+						new_root->setRight(new_element);
         			}
         			else{
-        				new_root->setRight(new_element);
+						new_root->setRight(new_element);
         			}
         	}
         	else {
         			child = new_root->getLeft();
-        			if( child != nullptr ){
+					if( child != nullptr ){
         		    	new_element->setLeft(child);
-        		    	new_root->unsafeDeleteLeftChild();
-        		    	new_root->setLeft(new_element);
+						new_root->unsafeDeleteLeftChild();
+						new_root->setLeft(new_element);
         		    }
-        		    else{
-        		    	new_root->setLeft(new_element);
+					else{
+						new_root->setLeft(new_element);
         		    }
         	}
-        }
+
+			root = splay(root,key);
+		}
     }
 
     /*!
@@ -157,12 +161,11 @@ class TreeMap
 
 private:
 
-
 	template<typename key_type, typename mapped_type>
 	class Node{
 	public:
 
-		Node() :  left(nullptr), right(nullptr){}
+		Node() : key(), value(), left(nullptr), right(nullptr){}
 		Node(key_type key, mapped_type value) : key(key), value(value), left(nullptr), right(nullptr){}
 
 		~Node(){
@@ -220,7 +223,6 @@ private:
 
 	};
 
-
     Node<key_type, mapped_type>* splay(Node<key_type, mapped_type>* root, const key_type& key){
 
     	auto child = getNodeSplay(root,key);
@@ -235,7 +237,7 @@ private:
 			else
 				rightRotation(parentPtr);
 
-			splay(root,key);
+			return splay(*parentPtr,key);
     	}
     	else
     		return child;
@@ -243,7 +245,6 @@ private:
     }
 
 	Node<key_type, mapped_type>* root;
-
 
 	Node<key_type, mapped_type>* getNodeSplayParent(Node<key_type, mapped_type>* root, Node<key_type, mapped_type>* desiredChild){
 
@@ -284,7 +285,8 @@ private:
 
     	if(!root)
 			return nullptr;
-		else{
+		
+    	else{
 			if(key == root->getKey())
 				return root;
 			else if(key < root->getKey()){
@@ -310,21 +312,25 @@ private:
 	}
 
 	void rightRotation(Node<key_type, mapped_type> **childNode) const{
-	              Node<key_type , mapped_type >* nodeX, nodeY;
+	              Node<key_type , mapped_type > *nodeX, *nodeY;
 	              nodeX = *childNode;
-	              nodeY = *(nodeX->getLeft());
-	              nodeX->setLeft(nodeY.getRight());
-	              nodeY.setRight(nodeX);
-	              *childNode = &nodeY;
+	              nodeY = nodeX->getLeft();
+	              nodeX->unsafeDeleteLeftChild();
+	              nodeX->setLeft(nodeY->getRight());
+	              nodeY->unsafeDeleteRightChild();
+	              nodeY->setRight(nodeX);
+	              *childNode = nodeY;
 	          }
 
 	void leftRotation(Node<key_type, mapped_type> **childNode) const{
-				  Node<key_type , mapped_type >* nodeX, nodeY;
+				  Node<key_type , mapped_type > *nodeX, *nodeY;
 				  nodeX = *childNode;
-				  nodeY = *(nodeX->getRight());
-				  nodeX->setRight(nodeY.getLeft());
-				  nodeY.setLeft(nodeX);
-				  *childNode = &nodeY;
+				  nodeY = nodeX->getRight();
+				  nodeX->unsafeDeleteRightChild();
+				  nodeX->setRight(nodeY->getLeft());
+				  nodeY->unsafeDeleteLeftChild();
+				  nodeY->setLeft(nodeX);
+				  *childNode = nodeY;
 			  }
 
 
