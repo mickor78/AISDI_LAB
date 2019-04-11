@@ -63,7 +63,6 @@ public:
 
     TreeMap() : root(nullptr){}
     ~TreeMap() {
-    	//TODO
     	delete(root);
     }
 
