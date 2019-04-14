@@ -5,6 +5,7 @@
 
 #include <map>
 #include <random>
+#include <algorithm>
 #include "fileUtility.h"
 #include "timeUtility.h"
 
