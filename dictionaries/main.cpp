@@ -1,49 +1,4 @@
 #include <iostream>
-#include <chrono>
-#include <utility>
-#include <memory>
-
-/*!
- *  Narzedzie do zliczania czasu
- *
- *  Sposob uzycia:
- *
- *  {
- *    Benchmark<std::chrono::nanoseconds> b;
- *    // kod do zbadania
- *    size_t elapsed = b.elapsed();
- *  }
- *
- *  lub
- *
- *  {
- *    Benchmark<std::chrono::milliseconds> b(true);
- *    // kod do zbadania
- *  } // obiekt wypisze wartosc czasu w podanych jednostkach na stderr
- */
-template<typename D = std::chrono::microseconds>
-class Benchmark {
-public:
-
-    Benchmark(bool printOnExit = false) : m_print(printOnExit) {
-        start = std::chrono::high_resolution_clock::now();
-    }
-    typename D::rep elapsed() const {
-        auto end = std::chrono::high_resolution_clock::now();
-        auto result = std::chrono::duration_cast<D>(end-start);
-        return result.count();
-    }
-    ~Benchmark() {
-        auto result = elapsed();
-        if (m_print)
-        {
-            std::cerr << "Czas: " << result << "\n";
-        }
-    }
-private:
-    std::chrono::high_resolution_clock::time_point start;
-    bool m_print = true;
-};
 
 
 
@@ -109,7 +64,7 @@ public:
     		return desiredNode->getValueRef();
 
 		else{
-			mapped_type dummyVal{};
+            mapped_type dummyVal;
 
 			this->insert(key, dummyVal);
 			return getNode(key,root)->getValueRef();
@@ -339,6 +294,16 @@ int main()
 {
 	insert_test();
 	unit_test();
-
+    compare_test(5);
+    compare_test(10);
+    compare_test(50);
+    compare_test(75);
+    compare_test(100);
+    compare_test(200);
+    compare_test(500);
+    compare_test(750);
+    compare_test(1000);
+    compare_test(2000);
+    compare_test(3000);
     return 0;
 }
