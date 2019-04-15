@@ -108,10 +108,12 @@ public:
     /*!
      * zwraca informacje, czy istnieje w slowniku podany klucz
      */
-    bool contains(const key_type &desiredKey) {
-        if (isEmpty()) return false;
-        root = splay(root, desiredKey);
-        return root->getKey() == desiredKey;
+    bool contains(const key_type& desiredKey) {
+		if(isEmpty())
+			return false;
+
+    	root = splay(root,desiredKey);
+    	return root->getKey() == desiredKey;
     }
 
     /*!
@@ -139,138 +141,165 @@ private:
         }
 
 
-        Node *getLeft() const {
-            return left;
-        }
+		Node* getLeft() const {
+			return left;
+		}
 
-        Node *getRight() const {
-            return right;
-        }
+		Node* getRight() const {
+			return right;
+		}
 
-        const mapped_type &getValue() const {
-            return value;
-        }
+		Node** getAppropriateChildSuperPtr(Node *node){
+			if(right == node)
+				return &right;
+			else if(left == node)
+				return &left;
+			else
+				throw -1;
+		}
+
+		const mapped_type& getValue() const{
+			return value;
+		}
 
         const key_type getKey() const {
             return key;
         }
 
-        void setValue(const mapped_type &newValue) {
-            value = newValue;
-        }
+		void setValue(const mapped_type& newValue){
+			value = newValue;
+		}
 
-        void setLeft(Node *node) {
-            if (!left)
-                delete (left);
-            left = node;
-        }
+		void setLeft(Node* node){
+			if(!left)
+				delete(left);
+			left = node;
+		}
 
-        void setRight(Node *node) {
-            if (!right)
-                delete (right);
-            right = node;
-        }
+		void setRight(Node* node){
+			if(!right)
+				delete(right);
+			right = node;
+		}
 
-        void unsafeDeleteRightChild() {
-            right = nullptr;
-        }
+		void unsafeDeleteRightChild(){
+			right = nullptr;
+		}
 
-        void unsafeDeleteLeftChild() {
-            left = nullptr;
-        }
+		void unsafeDeleteLeftChild(){
+			left = nullptr;
+		}
 
-    private:
-        Node *left;                // left child node
-        Node *right;            // right child node
-        key_type key;
-        mapped_type value;
+	private:
+    	Node* left;				// left child node
+		Node* right;			// right child node
+		key_type key;
+		mapped_type value;
 
 
     };
 
-    Node<key_type, mapped_type> *splay(Node<key_type, mapped_type> *root, const key_type &key) {
+    Node<key_type, mapped_type>* splay(Node<key_type, mapped_type>* root, const key_type& key) {
 
-        auto child = getNodeSplay(root, key);
-        auto parent = getNodeSplayParent(root, child);
-        Node<key_type, mapped_type> **parentPtr = &parent;
+    	auto child = getNodeSplay(root,key);
+    	auto parent = getNodeSplayParent(root,child);
+    	auto superParent = getNodeSplayParent(root, parent);
+		Node<key_type, mapped_type>** parentPtr = nullptr;
 
 
-        if (parent) {
-            if (parent->getKey() < child->getKey())
-                leftRotation(parentPtr);
-            else
-                rightRotation(parentPtr);
+    	if(parent)
+    	{
+			if(parent->getKey() < child->getKey())
+			{
+				if(superParent)
+					parentPtr = superParent->getAppropriateChildSuperPtr(parent);
+				else
+					parentPtr = &root;
+				leftRotation(parentPtr);
+			}
+			else
+			{
+				if(superParent)
+					parentPtr = superParent->getAppropriateChildSuperPtr(parent);
+				else
+					parentPtr = &root;
+				rightRotation(parentPtr);
+			}
 
-            return splay(*parentPtr, key);
-        } else
-            return child;
+			return splay(root,key);
+    	}
+    	else
+    		return child;
 
     }
 
-    Node<key_type, mapped_type> *root;
+	Node<key_type, mapped_type>* root;
 
-    Node<key_type, mapped_type> *
-    getNodeSplayParent(Node<key_type, mapped_type> *root, Node<key_type, mapped_type> *desiredChild) {
+	Node<key_type, mapped_type>* getNodeSplayParent(Node<key_type, mapped_type>* root, Node<key_type, mapped_type>* desiredChild) {
 
-        Node<key_type, mapped_type> *child;
+    	if(!desiredChild)
+    		return nullptr;
 
-        if (!root) {
-            return nullptr;
-        }
-        key_type key = desiredChild->getKey();
+		key_type key = desiredChild->getKey();
+    	Node<key_type, mapped_type>* child;
 
-        if (key == root->getKey())
-            return nullptr;
-        else {
-            if (key < root->getKey()) {
-                if (root->getLeft()) {
-                    if (key == (root->getLeft())->getKey())
-                        return root;
-                    else
-                        return getNodeSplayParent(root->getLeft(), desiredChild);
-                } else
-                    return nullptr;
-            } else {
-                if (root->getRight()) {
-                    if (key == (root->getRight())->getKey())
-                        return root;
-                    else
-                        return getNodeSplayParent(root->getRight(), desiredChild);
-                } else
-                    return nullptr;
-            }
-        }
-    }
+    	if(!root)
+			return nullptr;
+    	else if(key == root->getKey())
+    		return nullptr;
+    	else{
+			if(key < root->getKey()){
+				if(root->getLeft()){
+					if(key == (root->getLeft())->getKey())
+						return root;
+					else
+						return getNodeSplayParent(root->getLeft(), desiredChild);
+					}
+				else
+					return nullptr;
+			}
+			else{
+				if(root->getRight()){
+					if(key == (root->getRight())->getKey())
+						return root;
+					else
+						return getNodeSplayParent(root->getRight(), desiredChild);
+					}
+				else
+					return nullptr;
+			}
+    	}
+	}
 
-    Node<key_type, mapped_type> *getNodeSplay(Node<key_type, mapped_type> *root, const key_type &key) {
+	Node<key_type, mapped_type>* getNodeSplay(Node<key_type, mapped_type>* root, const key_type& key) {
 
-        Node<key_type, mapped_type> *child;
+    	Node<key_type, mapped_type>* child;
 
-        if (!root)
-            return nullptr;
+    	if(!root)
+			return nullptr;
 
-        else {
-            //  root->getKey();
-            if (key == root->getKey())
-                return root;
-            else if (key < root->getKey()) {
+    	else{
+			if(key == root->getKey())
+				return root;
+			else if(key < root->getKey()){
 
-                child = getNodeSplay(root->getLeft(), key);
+				child = getNodeSplay(root->getLeft(), key);
 
-                if (!child)
-                    return root;
-                else
-                    return child;
-            } else {
-                root->getRight();
-                child = getNodeSplay(root->getRight(), key);
+				if( !child )
+					return root;
+				else
+					return child;
+			}
+			else{
 
-                if (!child)
-                    return root;
-                else
-                    return child;
-            }
-        }
+				child = getNodeSplay(root->getRight(), key);
+
+				if( !child )
+					return root;
+				else
+					return child;
+			}
+		}
 
     }
 

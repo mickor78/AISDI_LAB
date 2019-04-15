@@ -2,6 +2,7 @@
 #define DICTIONARIES_TEST_H
 
 #include <cassert>
+#include <string>
 
 #include <map>
 #include <random>
