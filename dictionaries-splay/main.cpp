@@ -312,6 +312,7 @@ private:
 
 int main() {
     unit_test();
+    insert_test2();
 
     compare_test(5);
     compare_test(10);

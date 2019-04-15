@@ -13,7 +13,7 @@ class FileTest {
 public:
 
     FileTest() {
-        testFileInput.open("../pan-tadeusz.txt");
+        testFileInput.open("./pan-tadeusz.txt");
         if (!testFileInput.good())
             throw std::runtime_error("File ./pan-tadeusz.txt doesn't exist.");
     }
