@@ -409,7 +409,6 @@ int main()
 {
     unit_test();
     insert_test2();
-    insert_test3();
 
     return 0;
 }
