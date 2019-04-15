@@ -1,4 +1,5 @@
 #include <cassert>
+#include <string>
 
 void unit_test() {
     TreeMap<int,int> dict;
@@ -42,4 +43,25 @@ void unit_test() {
     assert(dict.size() == 3);
     assert(dict.value(2) == 4);
 }
+
+void insert_test2() {
+	TreeMap<int, std::string> dict;
+
+	// slownik jest pusty
+	assert(dict.isEmpty() == true);
+	assert(dict.size() == 0);
+	assert(dict.contains(5) == false);
+
+	// dodanie elementow do slownika
+	dict.insert(1, "");
+	dict.insert(2, "");
+	dict.insert(3, "");
+	dict.insert(4, "");
+	dict.insert(5, "k");
+	assert(dict.size() == 5);
+	assert(dict.contains(0) == false);
+	assert(dict.contains(1) == true);
+	assert(dict.contains(5) == true);
+}
+
 

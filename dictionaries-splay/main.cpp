@@ -168,7 +168,10 @@ public:
      * zwraca informacje, czy istnieje w slowniku podany klucz
      */
     bool contains(const key_type& desiredKey) {
-		root = splay(root,desiredKey);
+		if(isEmpty())
+			return false;
+
+    	root = splay(root,desiredKey);
     	return root->getKey() == desiredKey;
     }
 
@@ -202,6 +205,15 @@ private:
 
 		Node* getRight() const {
 			return right;
+		}
+
+		Node** getAppropriateChildSuperPtr(Node *node){
+			if(right == node)
+				return &right;
+			else if(left == node)
+				return &left;
+			else
+				throw -1;
 		}
 
 		const mapped_type& getValue() const{
@@ -251,17 +263,30 @@ private:
 
     	auto child = getNodeSplay(root,key);
     	auto parent = getNodeSplayParent(root,child);
-    	Node<key_type, mapped_type>** parentPtr = &parent;
+    	auto superParent = getNodeSplayParent(root, parent);
+		Node<key_type, mapped_type>** parentPtr = nullptr;
 
 
     	if(parent)
     	{
 			if(parent->getKey() < child->getKey())
+			{
+				if(superParent)
+					parentPtr = superParent->getAppropriateChildSuperPtr(parent);
+				else
+					parentPtr = &root;
 				leftRotation(parentPtr);
+			}
 			else
+			{
+				if(superParent)
+					parentPtr = superParent->getAppropriateChildSuperPtr(parent);
+				else
+					parentPtr = &root;
 				rightRotation(parentPtr);
+			}
 
-			return splay(*parentPtr,key);
+			return splay(root,key);
     	}
     	else
     		return child;
@@ -272,7 +297,10 @@ private:
 
 	Node<key_type, mapped_type>* getNodeSplayParent(Node<key_type, mapped_type>* root, Node<key_type, mapped_type>* desiredChild) {
 
-    	mapped_type key = desiredChild->getKey();
+    	if(!desiredChild)
+    		return nullptr;
+
+		key_type key = desiredChild->getKey();
     	Node<key_type, mapped_type>* child;
 
     	if(!root)
@@ -335,7 +363,7 @@ private:
 
 	}
 
-	void rightRotation(Node<key_type, mapped_type> **childNode) const{
+	void rightRotation(Node<key_type, mapped_type> **childNode) {
 	              Node<key_type , mapped_type > *nodeX, *nodeY;
 	              nodeX = *childNode;
 	              nodeY = nodeX->getLeft();
@@ -346,7 +374,7 @@ private:
 	              *childNode = nodeY;
 	          }
 
-	void leftRotation(Node<key_type, mapped_type> **childNode) const{
+	void leftRotation(Node<key_type, mapped_type> **childNode) {
 				  Node<key_type , mapped_type > *nodeX, *nodeY;
 				  nodeX = *childNode;
 				  nodeY = nodeX->getRight();
@@ -374,6 +402,7 @@ private:
 int main()
 {
     unit_test();
+    insert_test2();
 
     return 0;
 }
