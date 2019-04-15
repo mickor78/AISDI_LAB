@@ -13,7 +13,7 @@ class FileTest {
 public:
 
     FileTest() {
-        testFileInput.open("./pan-tadeusz.txt");
+        testFileInput.open("../pan-tadeusz.txt");
         if (!testFileInput.good())
             throw std::runtime_error("File ./pan-tadeusz.txt doesn't exist.");
     }
@@ -29,14 +29,31 @@ public:
     };
 
 
+    void readWordsToTable(std::string *stringTable, int size) {
+        for (int i = 0; testFileInput.eof() || i < size; ++i) {
+            *stringTable = readWord();
+            stringTable++;
+        }
+
+        //TODO
+        //what if I you would like to read the file once again???
+        //here the destructor should be called maybe
+    }
+
+private:
+
+    std::fstream testFileInput;
+
     std::string readWord() {
-        std::string letter, word;
+        char letter;
+        std::string word;
         while (!testFileInput.eof()) {
-            letter = std::to_string(testFileInput.get());
-            if (letter != " " || letter != "\n")
+            letter = testFileInput.get();
+            if (letter != ' ' && letter != '\r' && letter != '\n' && letter != ',')
                 word += letter;
             else {
-                if (!word.empty()) return word;
+                if (!word.empty() && word != "—") return word;
+                word = "";
             }
         }
 
@@ -46,20 +63,6 @@ public:
 
         return "";
     }
-
-    void readWordsToTable(std::string *stringTable) {
-        std::string *tablePointer = stringTable;
-        while (!testFileInput.eof() && tablePointer != nullptr) {
-            *tablePointer = readWord();
-            tablePointer++;
-        }
-        //TODO
-        //what if I you would like to read the file once again???
-        //here the destructor should be called maybe
-    }
-
-private:
-    std::fstream testFileInput;
 };
 
 #endif //DICTIONARIES_FILEUTILITY_H

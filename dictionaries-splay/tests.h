@@ -1,6 +1,7 @@
 #ifndef DICTIONARIES_TEST_H
 #define DICTIONARIES_TEST_H
 
+
 #include <cassert>
 #include <string>
 
@@ -113,7 +114,7 @@ void testRaportGenerator(
         const std::string &testType);
 
 
-void compare_test(const int WORDS_TEST_NUMBER) {
+void compare_test_num_as_key(const int WORDS_TEST_NUMBER) {
     if (WORDS_TEST_NUMBER == 0)
         throw std::runtime_error("Shouldn't be zero");
 
@@ -139,7 +140,7 @@ void compare_test(const int WORDS_TEST_NUMBER) {
      */
 
     std::string wordTable[WORDS_TEST_NUMBER];
-    panTadeuszFile.readWordsToTable(wordTable);
+    panTadeuszFile.readWordsToTable(wordTable, WORDS_TEST_NUMBER);
 
     // custom splay solution test
 
@@ -214,6 +215,97 @@ void compare_test(const int WORDS_TEST_NUMBER) {
 
 }
 
+void compare_test_word_as_key(const int WORDS_TEST_NUMBER) {
+    if (WORDS_TEST_NUMBER == 0)
+        throw std::runtime_error("Shouldn't be zero");
+
+    FileTest panTadeuszFile;
+    TreeMap<std::string, int> wordSplayTree;
+    std::map<std::string, int> wordMapTree;
+    Benchmark<std::chrono::nanoseconds> benchmarkNano;
+    static const int noMatterValue = 1;
+
+
+
+    /**
+     * Insert test
+     */
+
+    std::string wordTable[WORDS_TEST_NUMBER];
+    panTadeuszFile.readWordsToTable(wordTable, WORDS_TEST_NUMBER);
+
+    // custom splay solution test
+
+    size_t measureInsertsCustomSplaySolution = benchmarkNano.elapsed();
+    for (int i = 0; i < WORDS_TEST_NUMBER - 1; ++i) {
+        wordSplayTree.insert(wordTable[i], i);
+    }
+    measureInsertsCustomSplaySolution = benchmarkNano.elapsed() - measureInsertsCustomSplaySolution;
+
+    size_t measureInsertOneCustomSplaySolution = benchmarkNano.elapsed();
+    wordSplayTree.insert(wordTable[WORDS_TEST_NUMBER - 1], noMatterValue);
+    measureInsertOneCustomSplaySolution = benchmarkNano.elapsed() - measureInsertOneCustomSplaySolution;
+
+
+    // map test
+    size_t measureInsertsStdSolution = benchmarkNano.elapsed();
+    for (int i = 0; i < WORDS_TEST_NUMBER - 1; ++i) {
+        std::pair<std::string, int> temp(wordTable[i], i);
+        wordMapTree.insert(temp);
+    }
+    measureInsertsStdSolution = benchmarkNano.elapsed() - measureInsertsStdSolution;
+
+    std::pair<std::string, int> temp(wordTable[WORDS_TEST_NUMBER - 1], noMatterValue);
+
+    size_t measureInsertOneStdSolution = benchmarkNano.elapsed();
+    wordMapTree.insert(temp);
+    measureInsertOneStdSolution = benchmarkNano.elapsed() - measureInsertOneStdSolution;
+
+    testRaportGenerator(
+            WORDS_TEST_NUMBER,
+            WORDS_TEST_NUMBER,
+            measureInsertsCustomSplaySolution,
+            measureInsertOneCustomSplaySolution,
+            measureInsertsStdSolution,
+            measureInsertOneStdSolution,
+            "insert");
+
+
+    /**
+     * Search test
+     */
+    int numToFind =
+            WORDS_TEST_NUMBER > 10 ? (WORDS_TEST_NUMBER > 1000 ? WORDS_TEST_NUMBER / 100 : WORDS_TEST_NUMBER / 10)
+                                   : WORDS_TEST_NUMBER;
+
+    size_t measureSearchCustomSplaySolution = benchmarkNano.elapsed();
+    for (int keyNumber = 0; keyNumber < numToFind; ++keyNumber) {
+        wordSplayTree.contains(wordTable[rand() % WORDS_TEST_NUMBER]);
+    }
+    measureSearchCustomSplaySolution = benchmarkNano.elapsed() - measureSearchCustomSplaySolution;
+
+    size_t measureSearchOneCustomSplaySolution = measureSearchCustomSplaySolution / numToFind;
+
+    size_t measureSearchStdSolution = benchmarkNano.elapsed();
+    for (int keyNumber = 0; keyNumber < numToFind; ++keyNumber) {
+        wordMapTree.find(wordTable[rand() % WORDS_TEST_NUMBER]);
+    }
+    measureSearchStdSolution = benchmarkNano.elapsed() - measureSearchStdSolution;
+
+    size_t measureOneSearchStdSolution = measureSearchStdSolution / numToFind;
+
+
+    testRaportGenerator(
+            WORDS_TEST_NUMBER,
+            numToFind,
+            measureSearchCustomSplaySolution,
+            measureSearchOneCustomSplaySolution,
+            measureSearchStdSolution,
+            measureOneSearchStdSolution,
+            "search");
+
+}
+
 std::string ms2stringConverter(size_t measureCustomSplaySolution) {
     int nano = 1000000000;
     size_t min = measureCustomSplaySolution / 60 / nano;
@@ -254,6 +346,44 @@ void testRaportGenerator(
     resultFile << measureStdSolution << ",";
     resultFile << measureOneStdSolution << std::endl;
 
+}
+
+
+void compare_test_word_as_key_set() {
+    compare_test_word_as_key(6);
+    compare_test_word_as_key(10);
+    compare_test_word_as_key(50);
+    compare_test_word_as_key(100);
+    compare_test_word_as_key(200);
+    compare_test_word_as_key(500);
+    compare_test_word_as_key(1000);
+    compare_test_word_as_key(2000);
+    compare_test_word_as_key(5000);
+    compare_test_word_as_key(10000);
+    compare_test_word_as_key(15000);
+    compare_test_word_as_key(20000);
+    compare_test_word_as_key(30000);
+    compare_test_word_as_key(50000);
+    compare_test_word_as_key(60000);
+}
+
+
+void compare_test_num_as_key_set() {
+    compare_test_num_as_key(6);
+    compare_test_num_as_key(10);
+    compare_test_num_as_key(50);
+    compare_test_num_as_key(100);
+    compare_test_num_as_key(200);
+    compare_test_num_as_key(500);
+    compare_test_num_as_key(1000);
+    compare_test_num_as_key(2000);
+    compare_test_num_as_key(5000);
+    compare_test_num_as_key(10000);
+    compare_test_num_as_key(15000);
+    compare_test_num_as_key(20000);
+    compare_test_num_as_key(30000);
+    compare_test_num_as_key(50000);
+    compare_test_num_as_key(60000);
 }
 
 #endif //DICTIONARIES_TEST_H

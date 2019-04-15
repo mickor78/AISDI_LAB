@@ -350,20 +350,7 @@ int main() {
     insert_test2();
     insert_test3();
 
-    compare_test(5);
-    compare_test(10);
-    compare_test(50);
-    compare_test(100);
-    compare_test(200);
-    compare_test(500);
-    compare_test(1000);
-    compare_test(2000);
-    compare_test(5000);
-    compare_test(10000);
-    compare_test(15000);
-    compare_test(20000);
-    compare_test(30000);
-    compare_test(50000);
-    compare_test(60000);
+    compare_test_num_as_key_set();
+    compare_test_word_as_key_set();
     return 0;
 }
