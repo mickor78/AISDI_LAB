@@ -275,6 +275,7 @@ private:
 					parentPtr = superParent->getAppropriateChildSuperPtr(parent);
 				else
 					parentPtr = &root;
+
 				leftRotation(parentPtr);
 			}
 			else
@@ -283,6 +284,7 @@ private:
 					parentPtr = superParent->getAppropriateChildSuperPtr(parent);
 				else
 					parentPtr = &root;
+
 				rightRotation(parentPtr);
 			}
 
@@ -341,11 +343,15 @@ private:
     	else{
 			if(key == root->getKey())
 				return root;
+
 			else if(key < root->getKey()){
 
 				child = getNodeSplay(root->getLeft(), key);
 
 				if( !child )
+					return root;
+				//asymmetric condition for stopping infinite splaying
+				else if( key > child->getKey() and child->getRight() == nullptr )
 					return root;
 				else
 					return child;
@@ -403,6 +409,7 @@ int main()
 {
     unit_test();
     insert_test2();
+    insert_test3();
 
     return 0;
 }
