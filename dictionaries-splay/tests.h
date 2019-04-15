@@ -92,6 +92,17 @@ void insert_test2() {
 	assert(dict.contains(5) == true);
 }
 
+void insert_test3() {
+	TreeMap<int, std::string> dict;
+
+	// dodanie elementow do slownika
+	dict.insert(1, "");
+	dict.insert(3, "");
+	assert(dict.contains(1) == true);
+	assert(dict.contains(2) == false);
+	assert(dict.contains(3) == true);
+}
+
 void testRaportGenerator(
         int numOfAllElements,
         int testNumber,
