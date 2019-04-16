@@ -1,133 +1,77 @@
 #include <iostream>
-#include <chrono>
-#include <utility>
-
-/*!
- *  Narzedzie do zliczania czasu
- *
- *  Sposob uzycia:
- *
- *  {
- *    Benchmark<std::chrono::nanoseconds> b;
- *    // kod do zbadania
- *    size_t elapsed = b.elapsed();
- *  }
- *
- *  lub
- *
- *  {
- *    Benchmark<std::chrono::milliseconds> b(true);
- *    // kod do zbadania
- *  } // obiekt wypisze wartosc czasu w podanych jednostkach na stderr
- */
-template<typename D = std::chrono::microseconds>
-class Benchmark {
-public:
-
-    Benchmark(bool printOnExit = false) : m_print(printOnExit) {
-        start = std::chrono::high_resolution_clock::now();
-    }
-    typename D::rep elapsed() const {
-        auto end = std::chrono::high_resolution_clock::now();
-        auto result = std::chrono::duration_cast<D>(end-start);
-        return result.count();
-    }
-    ~Benchmark() {
-        auto result = elapsed();
-        if (m_print)
-        {
-            std::cerr << "Czas: " << result << "\n";
-        }
-    }
-private:
-    std::chrono::high_resolution_clock::time_point start;
-    bool m_print = true;
-};
-
-
-
-
 
 /*
  * Slownik
  *
  */
 template<typename KeyType, typename ValueType>
-class TreeMap
-{
+class TreeMap {
 public:
     using key_type = KeyType;
     using mapped_type = ValueType;
     using value_type = std::pair<const key_type, mapped_type>;
 
 
-    TreeMap() : root(nullptr){}
+    TreeMap() : root(nullptr) {}
+
     ~TreeMap() {
-    	delete(root);
+        delete (root);
     }
 
     /*!
      * true jezeli slownik jest pusty
      */
-    bool isEmpty() const
-    {
+    bool isEmpty() const {
         return root == nullptr;
     }
 
     /*!
      * dodaje wpis do slownika
      */
-    void insert(const key_type& key, const mapped_type &value)
-    {
-    	if(this->isEmpty()){
-    		root =  new Node<key_type, mapped_type>(key,value);
-    		return;
-    	}
+    void insert(const key_type &key, const mapped_type &value) {
+        if (this->isEmpty()) {
+            root = new Node<key_type, mapped_type>(key, value);
+            return;
+        }
 
-		auto new_root = splay(root,key);
-    	Node<key_type, mapped_type>* child = nullptr;
-    	Node<key_type, mapped_type>* new_element = new Node<key_type, mapped_type>(key,value);
+        auto new_root = splay(root, key);
+        Node <key_type, mapped_type> *child = nullptr;
+        Node <key_type, mapped_type> *new_element = new Node<key_type, mapped_type>(key, value);
 
-    	if(new_root->getKey()!= key)
-        {
-        	if(new_root->getKey() < key) {
+        if (new_root->getKey() != key) {
+            if (new_root->getKey() < key) {
 
-        			child = new_root->getRight();
-        			if( child != nullptr ){
-        				new_element->setRight(child);
-						new_root->unsafeDeleteRightChild();
-						new_root->setRight(new_element);
-        			}
-        			else{
-						new_root->setRight(new_element);
-        			}
-        	}
-        	else {
-        			child = new_root->getLeft();
-					if( child != nullptr ){
-        		    	new_element->setLeft(child);
-						new_root->unsafeDeleteLeftChild();
-						new_root->setLeft(new_element);
-        		    }
-					else{
-						new_root->setLeft(new_element);
-        		    }
-        	}
+                child = new_root->getRight();
+                if (child != nullptr) {
+                    new_element->setRight(child);
+                    new_root->unsafeDeleteRightChild();
+                    new_root->setRight(new_element);
+                } else {
+                    new_root->setRight(new_element);
+                }
+            } else {
+                child = new_root->getLeft();
+                if (child != nullptr) {
+                    new_element->setLeft(child);
+                    new_root->unsafeDeleteLeftChild();
+                    new_root->setLeft(new_element);
+                } else {
+                    new_root->setLeft(new_element);
+                }
+            }
 
 
-		}
-		else
-			new_root->setValue(value);
+        } else
+            new_root->setValue(value);
 
-		root = splay(root,key);
+        root = splay(root, key);
     }
 
     /*!
      * dodaje wpis do slownika przez podanie pary klucz-wartosc
      */
-    void insert(const value_type &key_value)
-    {
-		this->insert(key_value.first, key_value.second);
+    void insert(const value_type &key_value) {
+        this->insert(key_value.first, key_value.second);
     }
 
     /*!
@@ -135,33 +79,30 @@ public:
      *
      * jezeli elementu nie ma w slowniku, dodaje go
      */
-    mapped_type& operator[](const key_type& key)
-    {
-		root = splay(root,key);
+    mapped_type &operator[](const key_type &key) {
+        root = splay(root, key);
 
-		if(root and root->getKey() == key)
-			return const_cast<mapped_type&>(root->getValue());
+        if (root and root->getKey() == key)
+            return const_cast<mapped_type &>(root->getValue());
 
-		else{
-			mapped_type dummyVal{};
+        else {
+            mapped_type dummyVal{};
 
-			this->insert(key, dummyVal);
-			return const_cast<mapped_type&>(splay(root,key)->getValue());
-		}
+            this->insert(key, dummyVal);
+            return const_cast<mapped_type &>(splay(root, key)->getValue());
+        }
     }
 
     /*!
      * zwraca wartosc dla podanego klucza
      */
-    const mapped_type& value(const key_type& key)
-    {
-		root = splay(root,key);
-		if(root->getKey() == key)
-			return root->getValue();
-		else
-		{
-			throw -1;
-		}
+    const mapped_type &value(const key_type &key) {
+        root = splay(root, key);
+        if (root->getKey() == key)
+            return root->getValue();
+        else {
+            throw -1;
+        }
     }
 
     /*!
@@ -179,24 +120,25 @@ public:
      * zwraca liczbe wpisow w slowniku
      */
     size_t size() const {
-		return getSizeLookup(root);
+        return getSizeLookup(root);
     }
 
 private:
 
-	template<typename key_type, typename mapped_type>
-	class Node{
-	public:
+    template<typename key_type, typename mapped_type>
+    class Node {
+    public:
 
-		Node() : key(), value(), left(nullptr), right(nullptr){}
-		Node(key_type key, mapped_type value) : key(key), value(value), left(nullptr), right(nullptr){}
+        Node() : key(), value(), left(nullptr), right(nullptr) {}
 
-		~Node(){
-    		if(left)
-    			delete(left);
-    		if(right)
-    			delete(right);
-    	}
+        Node(key_type key, mapped_type value) : key(key), value(value), left(nullptr), right(nullptr) {}
+
+        ~Node() {
+            if (left)
+                delete (left);
+            if (right)
+                delete (right);
+        }
 
 
 		Node* getLeft() const {
@@ -220,9 +162,9 @@ private:
 			return value;
 		}
 
-		const key_type getKey() const {
-			return key;
-		}
+        const key_type getKey() const {
+            return key;
+        }
 
 		void setValue(const mapped_type& newValue){
 			value = newValue;
@@ -255,9 +197,7 @@ private:
 		mapped_type value;
 
 
-
-
-	};
+    };
 
     Node<key_type, mapped_type>* splay(Node<key_type, mapped_type>* root, const key_type& key) {
 
@@ -367,48 +307,50 @@ private:
 			}
 		}
 
-	}
+    }
 
-	void rightRotation(Node<key_type, mapped_type> **childNode) {
-	              Node<key_type , mapped_type > *nodeX, *nodeY;
-	              nodeX = *childNode;
-	              nodeY = nodeX->getLeft();
-	              nodeX->unsafeDeleteLeftChild();
-	              nodeX->setLeft(nodeY->getRight());
-	              nodeY->unsafeDeleteRightChild();
-	              nodeY->setRight(nodeX);
-	              *childNode = nodeY;
-	          }
+    void rightRotation(Node<key_type, mapped_type> **childNode) const {
+        Node<key_type, mapped_type> *nodeX, *nodeY;
+        nodeX = *childNode;
+        nodeY = nodeX->getLeft();
+        nodeX->unsafeDeleteLeftChild();
+        nodeX->setLeft(nodeY->getRight());
+        nodeY->unsafeDeleteRightChild();
+        nodeY->setRight(nodeX);
+        *childNode = nodeY;
+    }
 
-	void leftRotation(Node<key_type, mapped_type> **childNode) {
-				  Node<key_type , mapped_type > *nodeX, *nodeY;
-				  nodeX = *childNode;
-				  nodeY = nodeX->getRight();
-				  nodeX->unsafeDeleteRightChild();
-				  nodeX->setRight(nodeY->getLeft());
-				  nodeY->unsafeDeleteLeftChild();
-				  nodeY->setLeft(nodeX);
-				  *childNode = nodeY;
-			  }
+    void leftRotation(Node<key_type, mapped_type> **childNode) const {
+        Node<key_type, mapped_type> *nodeX, *nodeY;
+        nodeX = *childNode;
+        nodeY = nodeX->getRight();
+        nodeX->unsafeDeleteRightChild();
+        nodeX->setRight(nodeY->getLeft());
+        nodeY->unsafeDeleteLeftChild();
+        nodeY->setLeft(nodeX);
+        *childNode = nodeY;
+    }
 
-	const size_t getSizeLookup(const Node<key_type, mapped_type> *parentNode) const{
-		if(!parentNode)
-			return 0;
-		else{
-			size_t nLeft = getSizeLookup(parentNode->getLeft());
-			size_t nRight = getSizeLookup(parentNode->getRight());
-			return nLeft + nRight + 1;
-		}
-	}
+    const size_t getSizeLookup(const Node<key_type, mapped_type> *parentNode) const {
+        if (!parentNode)
+            return 0;
+        else {
+            size_t nLeft = getSizeLookup(parentNode->getLeft());
+            size_t nRight = getSizeLookup(parentNode->getRight());
+            return nLeft + nRight + 1;
+        }
+    }
 
 };
 
 #include "tests.h"
 
-int main()
-{
+int main() {
     unit_test();
     insert_test2();
+    insert_test3();
 
+    compare_test_num_as_key_set();
+    compare_test_word_as_key_set();
     return 0;
 }
