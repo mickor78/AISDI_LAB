@@ -8,6 +8,8 @@
 #include <cstdlib>
 #include <vector>
 #include "find_str_util.h"
+#include <cassert>
+#include <time.h>
 
 
 char randomChar() { return 'A' + rand() % 3; }

@@ -1,12 +1,16 @@
 #include <iostream>
+#include "tests.h"
 #include "test.h"
+#include "find_str_util.h"
+#include "find_str_util2.h"
 
 int main()
 {
-    srand(time(0));
+    boundary_test();
 
     std::cout << "\n" << "Hello World!" << std::endl;
     random_case_test();
 //    board_case_test();
+
 	return 0;
 }

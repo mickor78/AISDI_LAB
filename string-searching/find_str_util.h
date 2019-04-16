@@ -2,10 +2,16 @@
 // Created by Michal Korzeniewski on 2019-04-16.
 //
 
+#include <iostream>
+#include <vector>
+#include <string>
+
 #ifndef AISDI_LAB_FIND_STR_UTIL_H
 #define AISDI_LAB_FIND_STR_UTIL_H
 
 #include <cmath>
+
+
 
 int hash(const std::string &str);
 
