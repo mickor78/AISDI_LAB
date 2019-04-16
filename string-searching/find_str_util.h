@@ -6,6 +6,9 @@
 #define AISDI_LAB_FIND_STR_UTIL_H
 
 #include <cmath>
+#include <string>
+#include <iostream>
+#include <vector>
 
 int hash(const std::string &str);
 
