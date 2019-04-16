@@ -1,22 +1,12 @@
 #include <iostream>
-#include <vector>
-#include "tests.h"
-
-std::vector<int> find_N (const std::string& str, const std::string& text){
-	std::vector<int> result;
-
-	return result;
-}
-
-
-
-
-
-
+#include "test.h"
 
 int main()
 {
-	boundary_test();
+    srand(time(0));
 
+    std::cout << "\n" << "Hello World!" << std::endl;
+    random_case_test();
+    //board_case_test();
 	return 0;
 }
