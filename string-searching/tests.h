@@ -3,6 +3,7 @@
 #include <vector>
 
 std::vector<int> find_N (const std::string& pattern, const std::string& text);
+std::vector<int> prefixFun(const std::string &text);
 
 void boundary_test() {
 
@@ -39,4 +40,19 @@ void boundary_test() {
 	pattern = "ZZ";
 	text = "ABCABC";
 	assert(find_N(pattern, text).size() == 0);
+}
+
+void prefixTest() {
+
+	std::string testString = "AAAA";
+
+	for (auto element : testString){
+		std::cout<<element<<" ";
+	}
+
+	std::cout<<std::endl;
+
+	for (auto element : prefixFun(testString)){
+		std::cout<<element<<" ";
+	}
 }

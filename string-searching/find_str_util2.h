@@ -45,7 +45,29 @@ std::vector<int> find_N(const std::string &pattern, const std::string &text) {
 	return result;
 }
 
+std::vector<int> prefixFun(const std::string &text) {
 
+	std::vector<int> result(text.length(), 0);
+	int fingerPosition(0);
+
+	if (text.length() > 1) {
+
+		for(int k=1; k<text.length(); k++)
+		{
+			while(fingerPosition>0 && text[k] != text[fingerPosition])
+				fingerPosition=result[fingerPosition-1];
+
+			if(text[k] == text[fingerPosition])
+				result[k] = ++fingerPosition;
+			else
+				result[k] = 0;
+		}
+
+	} else if (text.length() == 2 and text[0] == text [1])
+			result[1] = 1;
+
+	return result;
+}
 
 
 
