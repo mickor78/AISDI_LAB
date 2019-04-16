@@ -30,10 +30,7 @@ void board_case_test() {
     /**
      * then
      */
-    assert(result.empty() == false);
-    assert(result.at(0) == 0);
-    assert(result.size() == 1);
-
+    assert(result.empty() == true);
 
     /**
      * given
@@ -79,13 +76,12 @@ void random_case_test() {
     for (int i = 0; i < text_predefined_size; ++i) {
         text += randomChar();
     }
-    int pattern_predefined_size = 4;
+    int pattern_predefined_size = 3;
     for (int i = 0; i < pattern_predefined_size; ++i) {
         pattern += randomChar();
     }
     std::vector<int> result = find(pattern, text);
 
-    std::cout << "text:\n" << text << std::endl;
     std::cout << "pattern:\n" << pattern << std::endl;
 
     std::cout << "Pattern was occured at: ";

@@ -7,6 +7,6 @@ int main()
 
     std::cout << "\n" << "Hello World!" << std::endl;
     random_case_test();
-    //board_case_test();
+//    board_case_test();
 	return 0;
 }
