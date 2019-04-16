@@ -1,12 +1,10 @@
 #include <iostream>
-#include "test.h"
+#include "tests.h"
+#include "find_str_util2.h"
 
 int main()
 {
-    srand(time(0));
+    boundary_test();
 
-
-    random_case_test();
-    //board_case_test();
 	return 0;
 }
