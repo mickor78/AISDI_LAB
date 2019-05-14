@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include <vector>
-#include "test.h"
+#include <assert.h>
 using namespace std;
 
 template<typename KeyType, typename ValueType>
@@ -62,20 +62,27 @@ public:
 		int iter = 1;
 		int indexOfChild = tempIndex*4+iter;
 
-
 		while (indexOfChild <= heap.size()-1) {
-			if (heap[tempIndex].first > heap[indexOfChild].first) {
-				auto temp = heap[tempIndex];
-				heap[tempIndex] = heap[indexOfChild];
-				heap[indexOfChild] = temp;
+			//find min child
+			auto tempFirst = heap[indexOfChild].first;
+			int indexOfminChild = indexOfChild;
+			for (int i = 1; i < 4; ++i) {
+				if (indexOfminChild+i > heap.size()-1) break;
+				if(heap[indexOfChild+i].first < tempFirst){
+					tempFirst=heap[indexOfChild+i].first;
+					indexOfminChild = indexOfChild+i;
+				}
 			}
-			if(indexOfChild%4==0)
-			{
-			tempIndex = indexOfChild;
-			indexOfChild = tempIndex*4+1;
-			}
-			indexOfChild++;
 
+			//replace parent if min child is smaller than
+			if (heap[tempIndex].first > heap[indexOfminChild].first) {
+				auto temp = heap[tempIndex];
+				heap[tempIndex] = heap[indexOfminChild];
+				heap[indexOfminChild] = temp;
+			}
+
+			tempIndex = indexOfminChild;
+			indexOfChild = tempIndex*4+1;
 		}
 
 		return head;
@@ -89,22 +96,23 @@ public:
 
 private:
 	vector<KeyValueType> heap;
+
 	void print(std::ostream& stream, int i, int tabNO) const {
 
-			if(i < heap.size()){
+		if(i < heap.size()){
 
-				string t = "";
-				for(int i = 0; i < tabNO; i++)
-					t += "\t";
+			string t = "";
+			for(int i = 0; i < tabNO; i++)
+				t += "\t";
 
-				stream << t << heap[i].first << endl;
+			stream << t << heap[i].first << endl;
 
-				print(stream, 4*i + 1, tabNO+1);
-				print(stream, 4*i + 2, tabNO+1);
-				print(stream, 4*i + 3, tabNO+1);
-				print(stream, 4*i + 4, tabNO+1);
-			}
+			print(stream, 4*i + 1, tabNO+1);
+			print(stream, 4*i + 2, tabNO+1);
+			print(stream, 4*i + 3, tabNO+1);
+			print(stream, 4*i + 4, tabNO+1);
 		}
+	}
 
 };
 
@@ -126,16 +134,21 @@ void unit_test() {
 
 	//testHeap.insert("a",1);
 
-	testHeap.print(cout);
-	cout<<endl;
+	testHeap.print(std::cout);
+	std::cout<<endl;
 
-	testHeap.pop();
+	std::cout<<"--------------------"<<endl;
 
-	testHeap.print(cout);
+	for (int i = 0; i < 10; ++i) {
+		testHeap.pop();
+	}
+
+	testHeap.print(std::cout);
+
 }
 
 int main() {
-	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
+	std::cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
 	unit_test();
 
 	return 0;
