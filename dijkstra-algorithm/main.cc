@@ -1,8 +1,11 @@
-#include <iostream>
+#include "fileUtility.h"
 
 int main()
 {
-	std::cout<<"\n"<<"Hello world"<<std::endl;
+	Board board;
+
+	std::cout<<std::endl;
+	board.print();
 
 	return 0;
 }
