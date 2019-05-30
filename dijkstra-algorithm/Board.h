@@ -26,10 +26,14 @@ public:
 
 			board_.push_back(lineInt);
 		}
+
+		file.close();
 	}
 
 	void print()
 	{
+		std::cout<<std::endl;
+
 		for(const auto & row : board_)
 		{
 			for(const auto & digit : row)
@@ -45,9 +49,11 @@ public:
 	}
 
 private:
+
 	std::vector< std::vector<int> > board_;
 	const std::string FILE_NAME_ = "..\\..\\board.txt";
 
 };
+
 
 #endif //DIJKSTRA_ALGORITHM_FILEUTILITY_H

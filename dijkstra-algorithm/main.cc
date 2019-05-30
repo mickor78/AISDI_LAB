@@ -1,10 +1,9 @@
-#include "fileUtility.h"
+#include "Board.h"
 
 int main()
 {
 	Board board;
 
-	std::cout<<std::endl;
 	board.print();
 
 	return 0;
