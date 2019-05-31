@@ -121,10 +121,28 @@ int h(coord coord_val){
 	return h(coord_val.first, coord_val.second);
 }
 
-coord popCheapest(vector<stateHistory>& queue){
+int getEntryCost(coord coord_val, vector<vector<int>> board){
 
-	if(queue.size() == 0)
-		return coord();
+	int i = coord_val.first;
+	int j = coord_val.second;
+
+	return board[i][j];
+}
+
+int getTotalCost(vector<coord> history, vector<vector<int>> board){
+
+	int totalCost{};
+
+	for(const auto state : history)
+		totalCost += getEntryCost(state, board);
+
+	return totalCost;
+}
+
+stateHistory popCheapest(vector<stateHistory>& queue){
+
+	if(queue.empty())
+		return stateHistory(-1, vector<coord>{coord(-1,-1)});
 
 	int minimalCost = 99999;
 	int currentCost;
@@ -142,8 +160,9 @@ coord popCheapest(vector<stateHistory>& queue){
 		}
 	}
 
+	stateHistory result = *cheapestIt;
 	queue.erase(cheapestIt);
-	return cheapest;
+	return result;
 }
 
 void astar(){
@@ -165,8 +184,9 @@ void astar(){
 
 
 
-	int i = 0,j = 6;
-	coord start(0,6);//start position
+	int i = 0,j = 6;				//start position
+	coord start(0,6), currentCoord;
+	stateHistory currentHist;
 	vector<coord> checked;
 	vector<coord> startHistory;
 	startHistory.push_back(start);
@@ -181,17 +201,18 @@ void astar(){
 
 	while(i!=6||j!=0){
 
+		currentHist = popCheapest(queue);							// get cheapest stateHistory from queue
+		currentCoord = *(currentHist.second.end() - 1);
+		checked.push_back(currentCoord);							// put current state into checked states
 
+		i = currentCoord.first;
+		j = currentCoord.second;
 
 		cout<<i<<" "<<j;
-
-		pair<int,int>pairOf;
-		pairOf.first = i;
-		pairOf.second = j;
-
+/*
 		// Left Right 0 1
 		if(0<j&&j<6){
-			tableOfPosibleWays.insert(Board[i][j-1]+h(i,j-1),pairOfPairs(pairOf, pair<int,int>(i,j-1)));
+			queue.push_back()
 			tableOfPosibleWays.insert(Board[i][j+1]+h(i,j+1),pairOfPairs(pairOf, pair<int,int>(i,j+1)));
 		} else if (j==0) {
 			tableOfPosibleWays.insert(9999,pairOfPairs(pairOf, pair<int,int>(i,j-1)));
@@ -221,7 +242,7 @@ void astar(){
 		cout<<" "<<best.first<<endl;
 
 		i = best.second.second.first;
-		j = best.second.second.second;
+		j = best.second.second.second;*/
 	}
 
 }
@@ -232,12 +253,25 @@ int main() {
 	//astar();
 
 	coord a(1,1), b(2,2), c(3,3);
+	vector<vector<int>> board = {
+			{3,3,3,3,2,1,0},
+			{3,3,3,1,1,1,2},
+			{6,6,5,1,4,9,9},
+			{9,9,9,1,1,1,1},
+			{7,7,7,8,4,2,1},
+			{4,4,5,4,4,2,1},
+			{0,1,1,1,1,1,1}
+	};
+
 
 	vector<stateHistory> queue = {
 			{3, vector<coord>{a,b,c}},
 			{1, vector<coord>{a,c,b}},
 			{2, vector<coord>{c,b,a}}
 	};
+
+	cout << getTotalCost(vector<coord>{a,b,c}, board) << endl;
+
 	cout << popCheapest(queue).first << endl;
 	cout << popCheapest(queue).first << endl;
 	cout << popCheapest(queue).first << endl;
