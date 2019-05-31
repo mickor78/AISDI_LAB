@@ -106,6 +106,9 @@ private:
 
 };
 
+using coord = pair<int,int>;
+using stateHistory = pair< int, vector<coord> >;
+
 int h(int i, int j){
 	const int horCost = j;
 	const int verCost = 6-i;
@@ -114,7 +117,37 @@ int h(int i, int j){
 
 }
 
+int h(coord coord_val){
+	return h(coord_val.first, coord_val.second);
+}
+
+coord popCheapest(vector<stateHistory>& queue){
+
+	if(queue.size() == 0)
+		return coord();
+
+	int minimalCost = 99999;
+	int currentCost;
+	vector<stateHistory>::iterator cheapestIt;
+	coord cheapest{};
+
+	for(auto iterator = queue.begin(); iterator != queue.end(); ++iterator){
+
+		currentCost = iterator->first;
+		if(currentCost < minimalCost){
+
+			cheapestIt = iterator;
+			cheapest = *(iterator->second.end() - 1);
+			minimalCost = iterator->first;
+		}
+	}
+
+	queue.erase(cheapestIt);
+	return cheapest;
+}
+
 void astar(){
+
 	vector<vector<int>>Board = {
 				{3,3,3,3,2,1,0},
 				{3,3,3,1,1,1,2},
@@ -125,7 +158,7 @@ void astar(){
 				{0,1,1,1,1,1,1}
 		};
 
-	Heap4<int,pair<int,int>> queue;
+	//Heap4<int,pair<int,int>> queue;
 	Heap4<int,pair<pair<int,int>,pair<int,int>>> tableOfPosibleWays;
 
 	using pairOfPairs = pair<pair<int,int>,pair<int,int>>;
@@ -133,6 +166,14 @@ void astar(){
 
 
 	int i = 0,j = 6;
+	coord start(0,6);//start position
+	vector<coord> checked;
+	vector<coord> startHistory;
+	startHistory.push_back(start);
+	vector<stateHistory> queue;
+
+	queue.push_back(stateHistory( h(start), startHistory ));
+
 	//0 LEFT
 	//1 RIGHT
 	//2 DOWN
@@ -188,10 +229,19 @@ void astar(){
 
 int main() {
 
-	astar();
+	//astar();
 
+	coord a(1,1), b(2,2), c(3,3);
 
+	vector<stateHistory> queue = {
+			{3, vector<coord>{a,b,c}},
+			{1, vector<coord>{a,c,b}},
+			{2, vector<coord>{c,b,a}}
+	};
+	cout << popCheapest(queue).first << endl;
+	cout << popCheapest(queue).first << endl;
+	cout << popCheapest(queue).first << endl;
+	cout << popCheapest(queue).first << endl;
 
-	cout << "!!!Hello World!!!" << endl; // prints !!!Hello World!!!
 	return 0;
 }
