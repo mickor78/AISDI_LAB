@@ -7,6 +7,7 @@
 #include <iostream>
 #include <tuple>
 #include <map>
+#include <algorithm>
 
 enum class Turn{ RIGHT, DOWN, LEFT, UP };
 
@@ -16,10 +17,10 @@ class Vertex
 public:
 	Vertex()
 	{
-		edges_[0] = std::pair<int, Vertex*>(10, nullptr);
-		edges_[1] = std::pair<int, Vertex*>(10, nullptr);
-		edges_[2] = std::pair<int, Vertex*>(10, nullptr);
-		edges_[3] = std::pair<int, Vertex*>(10, nullptr);
+		edges_.push_back(std::pair<int, Vertex*>(10, nullptr));
+		edges_.push_back(std::pair<int, Vertex*>(10, nullptr));
+		edges_.push_back(std::pair<int, Vertex*>(10, nullptr));
+		edges_.push_back(std::pair<int, Vertex*>(10, nullptr));
 		isEnd_ = false;
 	}
 
@@ -63,7 +64,7 @@ public:
 		return edges_[3].second;
 	}
 
-	std::pair<int,Vertex*>* getNeighbours()
+	std::vector<std::pair<int,Vertex*>>& getNeighbours()
 	{
 		return edges_;
 	}
@@ -79,7 +80,7 @@ public:
 	}
 
 private:
-	std::pair<int,Vertex*> edges_[4];
+	std::vector< std::pair<int,Vertex*> > edges_;
 	bool isEnd_;
 };
 
@@ -128,17 +129,53 @@ public:
 	}
 
 	std::vector<Turn> getShortestWay()
-	{/*
+	{
 		std::vector<Turn> shortestWay;
-		std::map< int,Turn > queue;
+		std::vector<Vertex*> visited;
+		std::vector< std::pair<int, Vertex*> > currentNeighbours;
+		std::map< int,Vertex* > queue;
+		std::map< int,Vertex* >::iterator first, toChange;
+		bool isFound = false;
+		queue.insert(std::pair<int, Vertex*>(0,start_));
+		Vertex* pointedVertex;
+		int currentCost;
 
-		for(auto & row : costMatrix)
-			for(auto & cost : row)
-				cost = 10;
+		first = queue.begin();
+		pointedVertex = first->second;
+		queue.erase(first);
 
-		costMatrix[0][0] = 0;
+		visited.push_back(pointedVertex);
+		currentNeighbours = pointedVertex->getNeighbours();
 
-*/
+		for(int i=0; i<4; ++i)
+		{
+			Vertex* vertex = currentNeighbours[i].second;
+			int localCost = currentNeighbours[i].first;
+
+			if(vertex != nullptr and not (std::find(visited.begin(), visited.end(), vertex) != visited.end()))
+			{
+				for(auto element : queue)
+				{
+					if(element.second == vertex)
+					{
+						isFound = true;
+						currentCost = element.first;
+
+						if(currentCost > localCost);	// TODO relaxate...
+
+						break;
+					}
+
+				} // TODO remember about incrementing cost
+
+				if(not isFound)
+					queue.insert(std::pair<int, Vertex*>(localCost,vertex));
+			}
+
+		}
+
+
+
 		return {};
 	}
 
