@@ -121,15 +121,18 @@ int h(coord coord_val){
 	return h(coord_val.first, coord_val.second);
 }
 
-int getEntryCost(coord coord_val, vector<vector<int>> board){
+int getEntryCost(coord coord_val, const vector<vector<int>>& board){
 
 	int i = coord_val.first;
 	int j = coord_val.second;
 
+	if(i < 0 or j < 0)
+		return 999999;
+
 	return board[i][j];
 }
 
-int getTotalCost(vector<coord> history, vector<vector<int>> board){
+int getTotalCost(const vector<coord>& history, const vector<vector<int>>& board){
 
 	int totalCost{};
 
@@ -165,9 +168,29 @@ stateHistory popCheapest(vector<stateHistory>& queue){
 	return result;
 }
 
+bool isAlreadyChecked(coord coord_val, const vector<coord>& checked_vec){
+
+	for(const auto checked : checked_vec)
+		if(checked == coord_val)
+			return true;
+
+	return false;
+}
+
+void pushBackToQueue(vector<stateHistory>& queue, const vector<vector<int>>& board, const vector<coord>& currentStateHistory, coord coord_val){
+
+	int cost = getTotalCost(currentStateHistory, board) + getEntryCost(coord_val, board);
+	cost += h(coord_val);
+
+	vector<coord> tempStateHistory = currentStateHistory;
+	tempStateHistory.push_back(coord_val);
+
+	queue.push_back( stateHistory(cost, tempStateHistory) );
+}
+
 void astar(){
 
-	vector<vector<int>>Board = {
+	vector<vector<int>> board = {
 				{3,3,3,3,2,1,0},
 				{3,3,3,1,1,1,2},
 				{6,6,5,1,4,9,9},
@@ -184,15 +207,15 @@ void astar(){
 
 
 
-	int i = 0,j = 6;				//start position
-	coord start(0,6), currentCoord;
+	int i = 0, j = 6;												//start position
+	coord start(i,j), currentCoord, right, down, left, up;
+	const coord NONE(-1,-1);
 	stateHistory currentHist;
-	vector<coord> checked;
-	vector<coord> startHistory;
-	startHistory.push_back(start);
+	vector<coord> checked_vec, currentStateHistory, tempStateHistory;
+	currentStateHistory.push_back(start);
 	vector<stateHistory> queue;
 
-	queue.push_back(stateHistory( h(start), startHistory ));
+	pushBackToQueue(queue, board, currentStateHistory, start);
 
 	//0 LEFT
 	//1 RIGHT
@@ -203,55 +226,76 @@ void astar(){
 
 		currentHist = popCheapest(queue);							// get cheapest stateHistory from queue
 		currentCoord = *(currentHist.second.end() - 1);
-		checked.push_back(currentCoord);							// put current state into checked states
+		currentStateHistory = currentHist.second;
+		checked_vec.push_back(currentCoord);						// put current state into checked states
 
 		i = currentCoord.first;
 		j = currentCoord.second;
 
-		cout<<i<<" "<<j;
-/*
-		// Left Right 0 1
-		if(0<j&&j<6){
-			queue.push_back()
-			tableOfPosibleWays.insert(Board[i][j+1]+h(i,j+1),pairOfPairs(pairOf, pair<int,int>(i,j+1)));
-		} else if (j==0) {
-			tableOfPosibleWays.insert(9999,pairOfPairs(pairOf, pair<int,int>(i,j-1)));
-			tableOfPosibleWays.insert(Board[i][j+1]+h(i,j+1),pairOfPairs(pairOf, pair<int,int>(i,j+1)));
-		} else {
-			tableOfPosibleWays.insert(Board[i][j-1]+h(i,j-1),pairOfPairs(pairOf, pair<int,int>(i,j-1)));
-			tableOfPosibleWays.insert(9999,pairOfPairs(pairOf, pair<int,int>(i,j+1)));
+		// print << (matrix location) : entryCost <<
+		cout << "(" << i << ", " << j << ") : " << getEntryCost(currentCoord, board) << endl;
+
+		if(0<j && j<6){ // check on the left and on the right
+
+			left = coord(i,j-1);
+			if(not isAlreadyChecked(left, checked_vec))
+				pushBackToQueue(queue, board, currentStateHistory, left);
+
+			right = coord(i,j+1);
+			if(not isAlreadyChecked(right, checked_vec))
+				pushBackToQueue(queue, board, currentStateHistory, right);
+
+		} else if (j==0) { // check only on the right
+
+			// pushBackToQueue(queue, board, currentStateHistory, NONE);
+
+			right = coord(i,j+1);
+			if(not isAlreadyChecked(right, checked_vec))
+				pushBackToQueue(queue, board, currentStateHistory, right);
+
+		} else { // check only on the left
+
+			// pushBackToQueue(queue, board, currentStateHistory, NONE);
+
+			left = coord(i,j-1);
+			if(not isAlreadyChecked(left, checked_vec))
+				pushBackToQueue(queue, board, currentStateHistory, left);
 		}
 
-		if(i<6&&0<i){
-			//UP Down
-			tableOfPosibleWays.insert(Board[i-1][j]+h(i-1,j),pairOfPairs(pairOf, pair<int,int>(i-1,j)));
-			tableOfPosibleWays.insert(Board[i+1][j]+h(i+1,j),pairOfPairs(pairOf, pair<int,int>(i+1,j)));
-		} else if (i==0) {
-			tableOfPosibleWays.insert(Board[i+1][j]+h(i+1,j),pairOfPairs(pairOf, pair<int,int>(i+1,j)));
-			tableOfPosibleWays.insert(9999,pairOfPairs(pairOf, pair<int,int>(i-1,j)));
-		} else {
-			tableOfPosibleWays.insert(9999,pairOfPairs(pairOf, pair<int,int>(i+1,j)));
-			tableOfPosibleWays.insert(Board[i-1][j]+h(i-1,j),pairOfPairs(pairOf, pair<int,int>(i-1,j)));
+		if(i<6&&0<i){ // check up and down
+
+			up = coord(i-1,j);
+			if(not isAlreadyChecked(up, checked_vec))
+				pushBackToQueue(queue, board, currentStateHistory, up);
+
+			down = coord(i+1,j);
+			if(not isAlreadyChecked(down, checked_vec))
+				pushBackToQueue(queue, board, currentStateHistory, down);
+
+		} else if (i==0) { // check only down
+
+			// pushBackToQueue(queue, board, currentStateHistory, NONE);
+
+			down = coord(i+1,j);
+			if(not isAlreadyChecked(down, checked_vec))
+				pushBackToQueue(queue, board, currentStateHistory, down);
+
+		} else { // check only up
+
+			// pushBackToQueue(queue, board, currentStateHistory, NONE);
+
+			up = coord(i-1,j);
+			if(not isAlreadyChecked(up, checked_vec))
+				pushBackToQueue(queue, board, currentStateHistory, up);
 		}
-
-
-		auto best = tableOfPosibleWays.pop();
-
-
-
-		cout<<" "<<best.first<<endl;
-
-		i = best.second.second.first;
-		j = best.second.second.second;*/
 	}
-
 }
 
 
 int main() {
 
-	//astar();
-
+	astar();
+/*
 	coord a(1,1), b(2,2), c(3,3);
 	vector<vector<int>> board = {
 			{3,3,3,3,2,1,0},
@@ -276,6 +320,6 @@ int main() {
 	cout << popCheapest(queue).first << endl;
 	cout << popCheapest(queue).first << endl;
 	cout << popCheapest(queue).first << endl;
-
+*/
 	return 0;
 }
