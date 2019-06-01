@@ -1,6 +1,8 @@
 
 #include <iostream>
 #include <vector>
+#include <fstream>
+#include <algorithm>
 using namespace std;
 using coord = pair<int,int>;
 using stateHistory = pair< int, vector<coord> >;
@@ -84,21 +86,37 @@ void pushBackToQueue(vector<stateHistory>& queue, const vector<vector<int>>& boa
 	queue.push_back( stateHistory(cost, tempStateHistory) );
 }
 
-void printSolution() {} // TODO printing solution as required
+void printSolution(vector<coord> solution,vector<vector<int>>board) {
+    cout << endl;
+    for (int i = 0; i < 7; ++i) {
+        for (int j = 0; j < 7; ++j) {
+            coord printCoord(i, j);
+            if (find(solution.begin(), solution.end(), printCoord) != solution.end())
+                cout << board[i][j];
+            else
+                cout << " ";
+        }
+        cout << endl;
+    }
 
+}
 
 void astar(){
 
-	// TODO read from a file
-	vector<vector<int>> board = {
-				{3,3,3,3,2,1,0},
-				{3,3,3,1,1,1,2},
-				{6,6,5,1,4,9,9},
-				{9,9,9,1,1,1,1},
-				{7,7,7,8,4,2,1},
-				{4,4,5,4,4,2,1},
-				{0,1,1,1,1,1,1}
-		};
+	vector<vector<int>> board;
+
+	board.resize(7);
+
+    ifstream input("../input.txt");
+    char sign;
+    int index = 7;
+    for (int k = 0; k < index; ++k) {
+        for (int i = 0; i < index+1; ++i) {
+            input.get(sign);
+            if(sign!='\n')
+            board[k].push_back(atoi(&sign));
+        }
+    }
 
 
 	int i = 0, j = 6;												//start position
@@ -175,13 +193,7 @@ void astar(){
 		}
 	}
 
-	solution = currentStateHistory;
-
-	cout << endl;
-	for(const auto coordVal : solution)
-		cout << coordVal.first << ", " << coordVal.second << endl;
-
-	printSolution();
+	printSolution(currentStateHistory,board);
 }
 
 
