@@ -10,102 +10,6 @@
 #include <vector>
 using namespace std;
 
-/*
- * queue.cpp
- *
- *  Created on: May 31, 2019
- *      Author: mkorzeni
- */
-
-
-template<typename KeyType, typename ValueType>
-class Heap4 {
-public:
-	using KeyValueType = std::pair< KeyType, ValueType>;
-
-	bool isEmpty() const {
-		return heap.size() == 0;
-	}
-
-	void insert(KeyType const& key, ValueType const & value) {
-		auto newElement = KeyValueType(key, value);
-
-		heap.push_back(newElement);
-
-		if (heap.size() == 1)
-			return;
-		else {
-			int tempIndex = heap.size() - 1;
-			int indexOfParent = (tempIndex - 1) / 4;
-
-			while (tempIndex != 0) {
-				if (heap[tempIndex].first < heap[indexOfParent].first) {
-					auto temp = heap[tempIndex];
-					heap[tempIndex] = heap[indexOfParent];
-					heap[indexOfParent] = temp;
-				}
-				tempIndex = indexOfParent;
-				indexOfParent = (tempIndex - 1) / 4;
-			}
-		}
-
-	}
-	void insert(KeyValueType const & key_value) {
-		insert(key_value.first, key_value.second);
-	}
-	KeyValueType const& peek() const {
-		if (!isEmpty())
-			return heap[0];
-		else
-			throw -1;
-	}
-	KeyValueType pop() {
-		KeyValueType head = *heap.begin();
-
-		*heap.begin() = *(--heap.end());
-		heap.pop_back();
-
-		int tempIndex = 0;
-		int iter = 1;
-		int indexOfChild = tempIndex*4+iter;
-
-		while (indexOfChild <= heap.size()-1) {
-		    //find min child
-		    auto tempFirst = heap[indexOfChild].first;
-		    int indexOfminChild = indexOfChild;
-            for (int i = 1; i < 4; ++i) {
-                if (indexOfminChild+i > heap.size()-1) break;
-                if(heap[indexOfChild+i].first < tempFirst){
-                    tempFirst=heap[indexOfChild+i].first;
-                    indexOfminChild = indexOfChild+i;
-                }
-            }
-
-            //replace parent if min child is smaller than
-			if (heap[tempIndex].first > heap[indexOfminChild].first) {
-				auto temp = heap[tempIndex];
-				heap[tempIndex] = heap[indexOfminChild];
-				heap[indexOfminChild] = temp;
-			}
-
-			tempIndex = indexOfminChild;
-			indexOfChild = tempIndex*4+1;
-		}
-
-		return head;
-	}
-	size_t size() const {
-		return heap.size();
-	}
-	void print(ostream& stream) const {
-		print(stream, 0, 0);
-	}
-
-private:
-	vector<KeyValueType> heap;
-
-};
-
 using coord = pair<int,int>;
 using stateHistory = pair< int, vector<coord> >;
 
@@ -188,8 +92,11 @@ void pushBackToQueue(vector<stateHistory>& queue, const vector<vector<int>>& boa
 	queue.push_back( stateHistory(cost, tempStateHistory) );
 }
 
+void printSolution() {} // TODO printing solution as required
+
 void astar(){
 
+	// TODO read from a file
 	vector<vector<int>> board = {
 				{3,3,3,3,2,1,0},
 				{3,3,3,1,1,1,2},
@@ -200,18 +107,11 @@ void astar(){
 				{0,1,1,1,1,1,1}
 		};
 
-	//Heap4<int,pair<int,int>> queue;
-	Heap4<int,pair<pair<int,int>,pair<int,int>>> tableOfPosibleWays;
-
-	using pairOfPairs = pair<pair<int,int>,pair<int,int>>;
-
-
 
 	int i = 0, j = 6;												//start position
 	coord start(i,j), currentCoord, right, down, left, up;
-	const coord NONE(-1,-1);
-	stateHistory currentHist;
-	vector<coord> checked_vec, currentStateHistory, tempStateHistory;
+	stateHistory cheapestState;
+	vector<coord> checked_vec, currentStateHistory, tempStateHistory, solution;
 	currentStateHistory.push_back(start);
 	vector<stateHistory> queue;
 
@@ -224,9 +124,9 @@ void astar(){
 
 	while(i!=6||j!=0){
 
-		currentHist = popCheapest(queue);							// get cheapest stateHistory from queue
-		currentCoord = *(currentHist.second.end() - 1);
-		currentStateHistory = currentHist.second;
+		cheapestState = popCheapest(queue);							// get cheapest stateHistory from queue
+		currentCoord = *(cheapestState.second.end() - 1);
+		currentStateHistory = cheapestState.second;
 		checked_vec.push_back(currentCoord);						// put current state into checked states
 
 		i = currentCoord.first;
@@ -247,15 +147,11 @@ void astar(){
 
 		} else if (j==0) { // check only on the right
 
-			// pushBackToQueue(queue, board, currentStateHistory, NONE);
-
 			right = coord(i,j+1);
 			if(not isAlreadyChecked(right, checked_vec))
 				pushBackToQueue(queue, board, currentStateHistory, right);
 
 		} else { // check only on the left
-
-			// pushBackToQueue(queue, board, currentStateHistory, NONE);
 
 			left = coord(i,j-1);
 			if(not isAlreadyChecked(left, checked_vec))
@@ -274,27 +170,32 @@ void astar(){
 
 		} else if (i==0) { // check only down
 
-			// pushBackToQueue(queue, board, currentStateHistory, NONE);
-
 			down = coord(i+1,j);
 			if(not isAlreadyChecked(down, checked_vec))
 				pushBackToQueue(queue, board, currentStateHistory, down);
 
 		} else { // check only up
 
-			// pushBackToQueue(queue, board, currentStateHistory, NONE);
-
 			up = coord(i-1,j);
 			if(not isAlreadyChecked(up, checked_vec))
 				pushBackToQueue(queue, board, currentStateHistory, up);
 		}
 	}
+
+	solution = currentStateHistory;
+
+	cout << endl;
+	for(const auto coordVal : solution)
+		cout << coordVal.first << ", " << coordVal.second << endl;
+
+	printSolution();
 }
 
 
 int main() {
 
 	astar();
+
 /*
 	coord a(1,1), b(2,2), c(3,3);
 	vector<vector<int>> board = {
