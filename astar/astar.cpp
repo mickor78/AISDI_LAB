@@ -1,15 +1,7 @@
-//============================================================================
-// Name        : djisc.cpp
-// Author      : 
-// Version     :
-// Copyright   : Your copyright notice
-// Description : Hello World in C++, Ansi-style
-//============================================================================
 
 #include <iostream>
 #include <vector>
 using namespace std;
-
 using coord = pair<int,int>;
 using stateHistory = pair< int, vector<coord> >;
 
@@ -93,6 +85,7 @@ void pushBackToQueue(vector<stateHistory>& queue, const vector<vector<int>>& boa
 }
 
 void printSolution() {} // TODO printing solution as required
+
 
 void astar(){
 
